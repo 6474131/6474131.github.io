@@ -34,6 +34,12 @@
 
 #image {
     width: 100%;
+    display: flex;
+}
+
+#image_holder {
+    display: flex;
+    justify-content: center;
 }
 
 textarea {
@@ -45,4 +51,16 @@ textarea {
     position: absolute;
     top: 0;
     left: 0%;
+}
+
+#text_holder {
+    background-color: black;
+}
+
+#new-text {
+    color: white;
+    font-size: 30px;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.5em;
 }

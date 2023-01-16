@@ -37,9 +37,14 @@ function saveAs(uri, filename) {
 }
 
 function downloadCap() {
-  let $image       = $("#image");
-  let previousSize = $image.css('width');
-  $image.css('width', $image[0].naturalWidth + "px");
+  const $image      = $("#image");
+  const $textHolder = $("#text_holder");
+
+  // const previousSize           = $image.css('width');
+  const textHolderPreviousSize = $textHolder.css('width');
+  // $image.css('width', $image[0].naturalWidth + "px");
+  $textHolder.css('width', $image[0].naturalWidth + "px");
+
   html2canvas(
     document.getElementById("text_holder"),
     {
@@ -51,7 +56,8 @@ function downloadCap() {
     .then(function (canvas) {
       saveAs(canvas.toDataURL(), 'cap.png');
     });
-  $image.css('width', previousSize);
+  // $image.css('width', previousSize);
+  $textHolder.css('width', textHolderPreviousSize);
 
 }
 
