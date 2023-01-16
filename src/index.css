@@ -29,7 +29,7 @@
 
 .column {
     flex: 50%;
-    border: 1px solid yellow;
+    /*border: 1px solid yellow;*/
 }
 
 #image {
