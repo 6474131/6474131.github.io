@@ -9,7 +9,18 @@ require("webpack-jquery-ui/css");
 
 const DEBUG      = true;
 const reTag      = /\[(.+?)]\s{0,2}("?.+?(?:"|\n|$))/g;
+const reItalic  = /(?<!\\)\*(.+?)(?<!\\)\*/g
+const reBold = /\*\*(.+?)\*\*/g
 const reUniQuote = /[\u201C\u201D]/g;
+
+function convertText(text) {
+  text = text.replace(reUniQuote, '"');
+  text = text.replace(reTag, '<span class="$1">$2</span>');
+  text = text.replace(reBold, '<b>$1</b>')
+  text = text.replace(reItalic, '<i>$1</i>')
+  text = text.replaceAll('\n', '<br>');
+  return text;
+}
 
 function saveAs(uri, filename) {
 
@@ -40,9 +51,7 @@ function downloadCap() {
   const $image      = $("#image");
   const $textHolder = $("#text_holder");
 
-  // const previousSize           = $image.css('width');
-  const textHolderPreviousSize = $textHolder.css('width');
-  // $image.css('width', $image[0].naturalWidth + "px");
+  // really only works on column caps
   $textHolder.css('width', $image[0].naturalWidth + "px");
 
   html2canvas(
@@ -57,7 +66,7 @@ function downloadCap() {
       saveAs(canvas.toDataURL(), 'cap.png');
     });
   // $image.css('width', previousSize);
-  $textHolder.css('width', textHolderPreviousSize);
+  $textHolder.css('width', '');
 
 }
 
@@ -80,12 +89,6 @@ function addToCharacterTags(name, tag) {
   $refill.val(name);
 }
 
-function convertText(text) {
-  text = text.replace(reUniQuote, '"');
-  text = text.replace(reTag, '<span class="$1">$2</span>');
-  text = text.replaceAll('\n', '<br>');
-  return text;
-}
 
 // async function getFonts() {
 //   const {state} = await navigator.permissions.query({name: 'local-fonts'});
