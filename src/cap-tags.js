@@ -11,7 +11,7 @@ export class BodyTag {
       if (fieldsKey.startsWith("css") && this[fieldsKey] !== "") {
         let keyName = fieldsKey.slice(4);
         $.injectCSS({
-                      ["#text_holder"]: {
+                      ["#new-text"]: {
                         [keyName]: this[fieldsKey],
                       },
                     }, {merge: true});
