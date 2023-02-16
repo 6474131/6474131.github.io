@@ -1,18 +1,25 @@
 {
+  "name": "web_cap_maker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@eastdesire/jscolor": "^2.5.1",
-    "express": "^4.18.2",
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.3.0-alpha1",
+    "bootstrap-icons": "^1.10.3",
     "html2canvas": "^1.4.1",
-    "jquery": "^3.6.3",
-    "jquery-ui": "^1.13.2",
-    "webpack-jquery-ui": "^2.0.1"
+    "jss": "^10.9.2",
+    "jss-preset-default": "^10.9.2",
+    "pinia": "^2.0.28",
+    "vue": "^3.2.45",
+    "vue-uuid": "^3.0.0"
   },
   "devDependencies": {
-    "css-loader": "^6.7.3",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
-    "style-loader": "^3.3.1",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.0.0"
   }
 }
