@@ -61,8 +61,8 @@
     <div class="capContainer">Sample text.</div>
     <div class="capContainer mb-3">More sample text.</div>
     <div class="form-check form-switch row">
-      <label class="form-check-label" for="characterTextDebug">Check to see raw CSS produced.</label>
-      <input class="form-check-input" type="checkbox" role="switch" id="characterTextDebug" v-model="debug">
+      <label class="form-check-label" for="capSettingsDebug">Check to see raw CSS produced.</label>
+      <input class="form-check-input" type="checkbox" role="switch" id="capSettingsDebug" v-model="debug">
     </div>
     <div v-if="debug">
       {{ store.getTextStyle() }}
