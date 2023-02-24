@@ -18,10 +18,10 @@
 
 <script>
 import Offcanvas from "@/components/sidebar/Offcanvas.vue";
-import TagForm from "@/components/TagForm.vue";
+import TagForm from "@/components/sidebar/TagForm.vue";
 import CapTextArea from "@/components/sidebar/CapTextArea.vue";
-import ImageUpload from "@/components/ImageUpload.vue";
-import CapSettings from "@/components/CapSettings.vue";
+import ImageUpload from "@/components/sidebar/ImageUpload.vue";
+import CapSettings from "@/components/sidebar/CapSettings.vue";
 import CapWizard from "@/components/sidebar/CapWizard.vue";
 
 export default {
