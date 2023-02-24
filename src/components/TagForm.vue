@@ -68,7 +68,11 @@ export default {
     };
   },
   mounted() {
-
+    // so that it autosets to the first character
+    const names = this.tags.getCharacterNames();
+    if (names.length > 0) {
+      this.currentCharacter = names[0];
+    }
   },
   methods: {
     listFonts,
