@@ -66,7 +66,7 @@ export default {
     if (!this.faqStore.closed) {
       this.modalObj.show();
     }
-    this.modalObj.addEventListener('hide.bs.modal', () => {
+    document.getElementById("faq").addEventListener('hide.bs.modal', () => {
       this.faqStore.closed = true;
     });
   },
