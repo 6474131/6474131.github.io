@@ -1,4 +1,5 @@
 <template>
+  <FaqModal/>
   <div class="container-fluid">
     <div class="row">
       <div class="col">
@@ -18,10 +19,11 @@
 <script>
 import Sidebar from "@/components/sidebar/Sidebar.vue";
 import { useCapTextStore } from "@/stores/cap-text";
+import FaqModal from "@/components/FaqModal.vue";
 
 export default {
   name:       "CapMaker",
-  components: {Sidebar},
+  components: {FaqModal, Sidebar},
   data() {
     return {textStore: useCapTextStore()};
   },

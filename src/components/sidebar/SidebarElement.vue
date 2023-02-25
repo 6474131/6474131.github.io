@@ -1,10 +1,10 @@
 <template>
-  <a href="#" :title="element.title" class="nav-link py-2 border-bottom border-primary-subtle position-relative"
-     data-bs-toggle="offcanvas"
-     data-tooltip="tooltip" data-bs-trigger="hover" :data-bs-target="element.target"
+  <a href="#" :title="title" class="nav-link py-2 border-bottom border-primary-subtle position-relative"
+     :data-bs-toggle="bsToggleType"
+     data-tooltip="tooltip" data-bs-trigger="hover" :data-bs-target="target"
      data-bs-placement="right">
-    <i :class="element.icon" style="font-size:24px;"></i>
-    <span v-if="checkErrors() > 0 && element.wizard"
+    <i :class="icon" style="font-size:24px;"></i>
+    <span v-if="checkErrors() > 0 && wizard"
           class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"> {{
         checkErrors()
       }}</span>
@@ -19,13 +19,15 @@ import { useImageStore } from "@/stores/cap-images";
 export default {
   name:  'SidebarElement',
   props: {
-    element:
-        {
-          icon:   String,
-          title:  String,
-          target: String,
-          wizard: Boolean,
-        },
+    icon: String,
+    title: String,
+    target: String,
+    wizard: Boolean,
+    bsToggleType: {
+      type: String,
+      default: "offcanvas"
+    }
+
   },
   data() {
     return {capText: useCapTextStore(), characterStore: useCharacterTagsStore(), imageStore: useImageStore()};

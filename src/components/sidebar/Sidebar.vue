@@ -1,8 +1,8 @@
 <template>
-  <div class="d-flex flex-column border border-primary m-3" style="width: 4.5rem;">
+  <div class="d-flex flex-column border border-primary m-3 sticky-top" style="width: 4.5rem;">
     <ul class="nav nav-flush flex-column text-center">
       <li v-for="element in elements">
-        <SidebarElement :element="element"/>
+        <SidebarElement v-bind="element"/>
       </li>
     </ul>
     <SidebarOffcanvases/>
@@ -49,6 +49,12 @@ export default {
           title:  'Caption Wizard',
           target: '#offcanvasWizard',
           wizard: true,
+        },
+        {
+          icon:         'bi-question-lg',
+          title:        'FAQ',
+          target:       '#faq',
+          bsToggleType: 'modal',
         },
       ],
     };
