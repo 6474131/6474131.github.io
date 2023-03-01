@@ -30,7 +30,7 @@
       <label class="input-group-text col-auto">Font Family</label>
       <select class="form-select row form-control" @change="(e) => updateText({'font-family': e.target.value})"
               :value="tags.getTag(currentCharacter)['font-family']">
-        <option v-for="font in listFonts()" :value="font">{{ font }}</option>
+        <option v-for="font in styleStore.listFonts()" :value="font">{{ font }}</option>
         <option value="revert">Normal</option>
       </select>
     </div>
@@ -56,13 +56,14 @@
 
 <script>
 import { useCharacterTagsStore } from "@/stores/character-tags";
-import { listFonts } from "@/js/global";
+import { useCapStyleStore } from "@/stores/cap-style";
 
 export default {
   name: "TagForm",
   data() {
     return {
       tags:             useCharacterTagsStore(),
+      styleStore:       useCapStyleStore(),
       currentCharacter: "",
       debug:            false,
     };
@@ -75,7 +76,6 @@ export default {
     }
   },
   methods: {
-    listFonts,
     updateText(cssRule) {
       this.tags.setTag(this.currentCharacter, cssRule);
     },
@@ -91,10 +91,9 @@ export default {
 </script>
 
 <style scoped>
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
+/*input::-webkit-outer-spin-button,*/
+/*input::-webkit-inner-spin-button {*/
+/*  -webkit-appearance: none;*/
+/*  margin: 0;*/
+/*}*/
 </style>

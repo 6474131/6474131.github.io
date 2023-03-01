@@ -36,7 +36,16 @@ export const useCapTextStore = defineStore('capText', () => {
     text = text.replace(reTag, '<span class="$1">$2</span>');
     text = text.replace(reBold, '<b>$1</b>');
     text = text.replace(reItalic, '<i>$1</i>');
-    text = text.replaceAll('\n', '<br>');
+    // i am... not happy with this lol.
+    // this is so that images aren't padded along with text
+    text = text.replaceAll(/(.+)/gm, (match) => {
+      const addOn = ``;
+      if (!match.includes("{img}")) {
+        return `<p class='capText'>${match}</p>${addOn}`;
+      }
+      return match + addOn;
+    });
+    text = text.replaceAll('\n\n', `<div class="capBreak">&nbsp;</div>`);
 
     let counter = 0;
     text        = text.replace(reImg, (match, $1) => {
@@ -92,6 +101,7 @@ export const useCapTextStore = defineStore('capText', () => {
 
   return {
     _rawText,
+    getText,
     htmlText,
     setText,
     checkQuotes,

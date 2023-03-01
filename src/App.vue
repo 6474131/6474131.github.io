@@ -1,5 +1,4 @@
 <template>
-  <FaqModal/>
   <div class="container-fluid">
     <div class="row">
       <div class="col">
@@ -35,5 +34,12 @@ export default {
 img {
   width: 100%;
 }
-</style>
 
+p.capText {
+  margin-bottom: 0 !important;
+}
+
+.capContainer > div:last-child {
+  padding-bottom: 2.5em;
+}
+</style>
