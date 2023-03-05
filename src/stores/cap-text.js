@@ -1,12 +1,13 @@
 import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useImageStore } from "@/stores/cap-images";
-
-const reTag      = /\[(.+?)]\s{0,2}("?.+?(?:"|\n|$))/g;
-const reItalic   = /(?<!\\)\*(.+?)(?<!\\)\*/g;
-const reBold     = /\*\*(.+?)\*\*/g;
-const reUniQuote = /[\u201C\u201D]/g;
-const reImg      = /\{img(\d+)?}/g;
+import {
+  reBold,
+  reDialogue,
+  reImg,
+  reItalic,
+  reTag,
+} from "@/js/global";
 
 export const useCapTextStore = defineStore('capText', () => {
   const _rawText      = ref("");
@@ -32,7 +33,6 @@ export const useCapTextStore = defineStore('capText', () => {
   }
 
   function convertText(text) {
-    text = text.replace(reUniQuote, '"');
     text = text.replace(reTag, '<span class="$1">$2</span>');
     text = text.replace(reBold, '<b>$1</b>');
     text = text.replace(reItalic, '<i>$1</i>');
@@ -79,11 +79,12 @@ export const useCapTextStore = defineStore('capText', () => {
       // matches will be off
       return ' '.repeat(match.length);
     });
-    const matches        = removedTagText.matchAll(/(?<!\[\w+]\s+)".*?"/g);
+
+    const matches = removedTagText.matchAll(reDialogue);
     if (matches) {
       for (const match of matches) {
         // this gives the whole match for some reason
-        // i will never understand javascript
+        // I will never understand javascript
         badLines.push(match);
       }
     }
