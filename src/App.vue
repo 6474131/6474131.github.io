@@ -38,6 +38,8 @@ img {
 
 p.capText {
   margin-bottom: 0 !important;
+  /*needed to fix some weird kerning bug on mobile*/
+  letter-spacing: 0.01px;
 }
 
 .capContainer > div:last-child {

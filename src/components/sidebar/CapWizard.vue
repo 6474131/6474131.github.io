@@ -42,6 +42,21 @@
     </div>
   </template>
   <hr>
+  <form class="container-fluid">
+    <div class="form-check form-switch mb-3">
+      <label class="form-check-label" for="useWidth">Do you want to use a given width?
+      </label>
+      <input class="form-check-input" type="checkbox" role="switch" id="useWidth"
+             v-model="capSettingsStore.settings.useGivenWidth">
+    </div>
+    <div class="row input-group mb-3" v-if="capSettingsStore.settings.useGivenWidth">
+      <label class="input-group-text col-auto" for="capWidth">Character Font Size</label>
+      <input type="number" id="capWidth" class="form-control col-sm-1" placeholder="Size here..."
+             @input="(e) => capSettingsStore.settings.width = parseInt(e.target.value)"
+             :value="capSettingsStore.settings.width">
+      <label class="input-group-text col-auto" for="characterFontSize">px</label>
+    </div>
+  </form>
   <button type="button" class="btn btn-primary mb-3" @click="downloadCap">Download cap</button>
   <br>
   <div class="form-check form-switch mb-3">
@@ -62,6 +77,7 @@ import { useCharacterTagsStore } from "@/stores/character-tags";
 import { useCapStyleStore } from "@/stores/cap-style";
 import { useImageStore } from "@/stores/cap-images";
 import html2canvas from "html2canvas";
+import { useCapSettingsStore } from "@/stores/cap-settings";
 
 function saveAs(uri, filename) {
 
@@ -98,17 +114,23 @@ export default {
       redditTranscript: true,
       capStyle:         useCapStyleStore(),
       imageStore:       useImageStore(),
+      capSettingsStore: useCapSettingsStore(),
     };
   },
   methods: {
     downloadCap() {
       const images = document.querySelectorAll("img");
       let maxSize  = 0;
-      images.forEach((image) => {
-        if (image.naturalWidth > maxSize) {
-          maxSize = image.naturalWidth;
-        }
-      });
+      if (this.capSettingsStore.settings.useGivenWidth) {
+        maxSize = this.capSettingsStore.settings.width;
+      }
+      else {
+        images.forEach((image) => {
+          if (image.naturalWidth > maxSize) {
+            maxSize = image.naturalWidth;
+          }
+        });
+      }
       console.log("THIS IS THE MAX SIZE: " + maxSize);
       const container       = document.getElementById("capContainer");
       const beforeWidth     = container.style.width;
