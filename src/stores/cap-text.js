@@ -36,6 +36,7 @@ export const useCapTextStore = defineStore('capText', () => {
     text = text.replace(reTag, '<span class="$1">$2</span>');
     text = text.replace(reBold, '<b>$1</b>');
     text = text.replace(reItalic, '<i>$1</i>');
+    text = text.replace("{img}", "\n{img}\n");
     // i am... not happy with this lol.
     // this is so that images aren't padded along with text
     text = text.replaceAll(/(.+)/gm, (match) => {
