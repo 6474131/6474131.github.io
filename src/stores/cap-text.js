@@ -33,10 +33,11 @@ export const useCapTextStore = defineStore('capText', () => {
   }
 
   function convertText(text) {
+    text = text.replace("{img}", "\n\n{img}\n\n");
+    text = text.trimStart();
     text = text.replace(reTag, '<span class="$1">$2</span>');
     text = text.replace(reBold, '<b>$1</b>');
     text = text.replace(reItalic, '<i>$1</i>');
-    text = text.replace("{img}", "\n{img}\n");
     // i am... not happy with this lol.
     // this is so that images aren't padded along with text
     text = text.replaceAll(/(.+)/gm, (match) => {
@@ -52,9 +53,9 @@ export const useCapTextStore = defineStore('capText', () => {
     text        = text.replace(reImg, (match, $1) => {
       // if user manually specified which image to use, base 1
       if ($1) {
-        return `<img alt="" class="capImg" src=${imageStore.getImage(parseInt($1) - 1)}>`;
+        return `<div class="capImg"><img alt="" src=${imageStore.getImage(parseInt($1) - 1)}></div>`;
       }
-      return `<img alt="" class="capImg" src=${imageStore.getImage(counter++)}>`;
+      return `<div class="capImg"><img alt="" src=${imageStore.getImage(counter++)}></div>`;
 
     });
     return text;
