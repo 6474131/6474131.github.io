@@ -58,6 +58,11 @@
     </div>
   </form>
   <button type="button" class="btn btn-primary mb-3" @click="downloadCap">Download cap</button>
+  <template v-if="progress > 0 && progress < 1">
+    <span class="spinner-border ms-3 me-3" role="status"></span>
+    <span>Progress:  {{ parseInt("" + progress * 100) }}%</span>
+
+  </template>
   <br>
   <div class="form-check form-switch mb-3">
     <label class="form-check-label" for="transcriptReddit">Do you want a transcript for
@@ -91,6 +96,7 @@ export default {
       capStyle:         useCapStyleStore(),
       imageStore:       useImageStore(),
       capSettingsStore: useCapSettingsStore(),
+      progress:         0,
     };
   },
   methods: {
@@ -113,44 +119,61 @@ export default {
         window.open(uri);
       }
     },
-    recordGif(canvas, frames, gifSettings) {
-      let tempCanvas = document.createElement('canvas');
-      let tempCtx    = tempCanvas.getContext('2d');
-
+    async recordGif(canvas, gifSettings) {
+      const response = await fetch(this.imageStore.getImage(0));
+      const buffer   = await response.arrayBuffer();
+      const gifData  = new Uint8Array(buffer);
+      const gif      = parseGIF(gifData);
+      const frames   = decompressFrames(gif, true);
+      const ctx      = canvas.getContext("2d");
       CanvasCapture.init(canvas);
       CanvasCapture.beginGIFRecord({
-                                     // onError:          () => console.log("ERROR!"),
-                                     onExportProgress: (index) => {
-                                       console.log("PROGRESS " + index);
+                                     onExportProgress: (progress) => {
+                                       console.log("PROGRESS " + progress);
+                                       if (progress > 0) {
+                                         this.progress = progress;
+                                       }
+                                       if (progress === 1) {
+                                         this.progress = 0;
+                                       }
                                      },
                                      fps:              1000 / frames[0].delay,
                                    });
-      let context = canvas.getContext('2d');
-      let counter = 0;
 
-      function render() {
-        if (counter >= frames.length) {
+      const frameCanvases = frames.map((frame) => {
+        const frameCanvas  = document.createElement("canvas");
+        frameCanvas.width  = gif.lsd.width;
+        frameCanvas.height = gif.lsd.height;
+        const frameCtx     = frameCanvas.getContext("2d");
+        frameCtx.putImageData(
+            new ImageData(frame.patch, frame.dims.width, frame.dims.height),
+            frame.dims.left,
+            frame.dims.top,
+        );
+        return frameCanvas;
+      });
+
+      let frameIndex = 0;
+
+      function drawFrame() {
+        if (frameIndex >= frames.length) {
           CanvasCapture.stopRecord();
           return;
         }
-        const frame       = frames[counter];
-        let imageData     = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
-        tempCanvas.width  = frame.dims.width;
-        tempCanvas.height = frame.dims.height;
-        tempCtx.resetTransform();
-        tempCtx.putImageData(imageData, 0, 0, 0, 0, frame.dims.width, frame.dims.height);
-
-        context.resetTransform();
-
-        context.drawImage(tempCanvas, gifSettings.left, gifSettings.top, gifSettings.width, gifSettings.height);
-
+        ctx.resetTransform();
+        ctx.drawImage(
+            frameCanvases[frameIndex],
+            gifSettings.left,
+            gifSettings.top,
+            gifSettings.width,
+            gifSettings.height,
+        );
+        frameIndex++;
         CanvasCapture.recordFrame();
-        counter++;
-
-        requestAnimationFrame(render);
+        requestAnimationFrame(drawFrame);
       }
 
-      render();
+      drawFrame();
     },
     getGifSettings(element, parent) {
       const innerBox = element.getBoundingClientRect();
@@ -163,9 +186,10 @@ export default {
     imageTypeFromDataUri(dataUri) {
       return dataUri.substring(dataUri.indexOf('/') + 1, dataUri.indexOf(';base64'));
     },
-    async downloadCap() {
-      const images = document.querySelectorAll("img");
-      let maxSize  = 0;
+    downloadCap() {
+      this.progress = 0.01;
+      const images  = document.querySelectorAll("img");
+      let maxSize   = 0;
       if (this.capSettingsStore.settings.useGivenWidth) {
         maxSize = this.capSettingsStore.settings.width;
       }
@@ -190,10 +214,6 @@ export default {
       };
       const container          = document.getElementById("capContainer");
       if (imageType === 'gif' || imageType === 'octet-stream') {
-        const resp   = await fetch(this.imageStore.getImage(0));
-        const buffer = await resp.arrayBuffer();
-        const gif    = parseGIF(buffer);
-        const frames = decompressFrames(gif, true);
 
         let gifSettings;
         html2canvasOptions.onclone = (_, element) => {
@@ -204,8 +224,10 @@ export default {
           gifSettings = this.getGifSettings(img, element);
         };
 
-        const canvas = await html2canvas(container, html2canvasOptions);
-        this.recordGif(canvas, frames, gifSettings);
+        html2canvas(container, html2canvasOptions).then((canvas) => {
+          this.recordGif(canvas, gifSettings);
+
+        });
 
       }
       else {
@@ -213,8 +235,9 @@ export default {
           element.style.width = `${maxSize}px`;
         };
 
-        const canvas = await html2canvas(container, html2canvasOptions);
-        this.saveAs(canvas.toDataURL(), 'cap.png');
+        html2canvas(container, html2canvasOptions).then((canvas) => {
+          this.saveAs(canvas.toDataURL(), 'cap.png');
+        });
       }
 
     },
