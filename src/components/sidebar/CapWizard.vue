@@ -78,32 +78,8 @@ import { useCapStyleStore } from "@/stores/cap-style";
 import { useImageStore } from "@/stores/cap-images";
 import html2canvas from "html2canvas";
 import { useCapSettingsStore } from "@/stores/cap-settings";
-
-function saveAs(uri, filename) {
-
-  let link = document.createElement('a');
-
-  if (typeof link.download === 'string') {
-
-    link.href     = uri;
-    link.download = filename;
-
-    //Firefox requires the link to be in the body
-    document.body.appendChild(link);
-
-    //simulate click
-    link.click();
-
-    //remove the link when done
-    document.body.removeChild(link);
-
-  }
-  else {
-
-    window.open(uri);
-
-  }
-}
+import { parseGIF, decompressFrames } from "gifuct-js";
+import { CanvasCapture } from "canvas-capture";
 
 export default {
   name: "CapWizard",
@@ -118,7 +94,76 @@ export default {
     };
   },
   methods: {
-    downloadCap() {
+    saveAs(uri, filename) {
+      let link = document.createElement('a');
+      if (typeof link.download === 'string') {
+        link.href     = uri;
+        link.download = filename;
+
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link);
+
+        //simulate click
+        link.click();
+
+        //remove the link when done
+        document.body.removeChild(link);
+      }
+      else {
+        window.open(uri);
+      }
+    },
+    recordGif(canvas, frames, gifSettings) {
+      let tempCanvas = document.createElement('canvas');
+      let tempCtx    = tempCanvas.getContext('2d');
+
+      CanvasCapture.init(canvas);
+      CanvasCapture.beginGIFRecord({
+                                     // onError:          () => console.log("ERROR!"),
+                                     onExportProgress: (index) => {
+                                       console.log("PROGRESS " + index);
+                                     },
+                                     fps:              1000 / frames[0].delay,
+                                   });
+      let context = canvas.getContext('2d');
+      let counter = 0;
+
+      function render() {
+        if (counter >= frames.length) {
+          CanvasCapture.stopRecord();
+          return;
+        }
+        const frame       = frames[counter];
+        let imageData     = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+        tempCanvas.width  = frame.dims.width;
+        tempCanvas.height = frame.dims.height;
+        tempCtx.resetTransform();
+        tempCtx.putImageData(imageData, 0, 0, 0, 0, frame.dims.width, frame.dims.height);
+
+        context.resetTransform();
+
+        context.drawImage(tempCanvas, gifSettings.left, gifSettings.top, gifSettings.width, gifSettings.height);
+
+        CanvasCapture.recordFrame();
+        counter++;
+
+        requestAnimationFrame(render);
+      }
+
+      render();
+    },
+    getGifSettings(element, parent) {
+      const innerBox = element.getBoundingClientRect();
+      const outerBox = parent.getBoundingClientRect();
+      const top      = innerBox.top - outerBox.top;
+      const left     = innerBox.left - outerBox.left;
+
+      return {top: top, left: left, width: element.width, height: element.height};
+    },
+    imageTypeFromDataUri(dataUri) {
+      return dataUri.substring(dataUri.indexOf('/') + 1, dataUri.indexOf(';base64'));
+    },
+    async downloadCap() {
       const images = document.querySelectorAll("img");
       let maxSize  = 0;
       if (this.capSettingsStore.settings.useGivenWidth) {
@@ -132,25 +177,46 @@ export default {
         });
       }
       console.log("THIS IS THE MAX SIZE: " + maxSize);
-      const container       = document.getElementById("capContainer");
-      const beforeWidth     = container.style.width;
-      container.style.width = `${maxSize}px`;
 
-      html2canvas(
-          document.getElementById("capContainer"),
-          {
-            backgroundColor: this.capStyle.getTextStyle()['background-color'] ?? "#212529",
-            width:           maxSize !== 0 ? maxSize : 300,
-            allowTaint:      false,
-            scrollX:         0,
-            scrollY:         -window.scrollY,
-            scale:           1,
-          },
-      )
-          .then((canvas) => {
-            saveAs(canvas.toDataURL(), 'cap.png');
-          });
-      container.style.width = beforeWidth;
+      const imageType = this.imageTypeFromDataUri(this.imageStore.getImage(0));
+      console.log("IMAGE TYPE: " + imageType);
+
+      const html2canvasOptions = {
+        backgroundColor: this.capStyle.getTextStyle()['background-color'] ?? "#212529",
+        allowTaint:      false,
+        scrollX:         0,
+        scrollY:         -window.scrollY,
+        scale:           1,
+      };
+      const container          = document.getElementById("capContainer");
+      if (imageType === 'gif' || imageType === 'octet-stream') {
+        const resp   = await fetch(this.imageStore.getImage(0));
+        const buffer = await resp.arrayBuffer();
+        const gif    = parseGIF(buffer);
+        const frames = decompressFrames(gif, true);
+
+        let gifSettings;
+        html2canvasOptions.onclone = (_, element) => {
+          element.style.width = `${maxSize}px`;
+
+          // need to get the width/height position of the image in the container, since it may not be the same as outside the container
+          const img   = element.querySelectorAll("img")[0];
+          gifSettings = this.getGifSettings(img, element);
+        };
+
+        const canvas = await html2canvas(container, html2canvasOptions);
+        this.recordGif(canvas, frames, gifSettings);
+
+      }
+      else {
+        html2canvasOptions.onclone = (_, element) => {
+          element.style.width = `${maxSize}px`;
+        };
+
+        const canvas = await html2canvas(container, html2canvasOptions);
+        this.saveAs(canvas.toDataURL(), 'cap.png');
+      }
+
     },
     copyTranscript() {
       let text = document.getElementById("capContainer").innerText.trim();
