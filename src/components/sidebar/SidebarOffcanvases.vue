@@ -26,7 +26,14 @@ import CapWizard from "@/components/sidebar/CapWizard.vue";
 
 export default {
   name:       "SidebarOffcanvases",
-  components: {CapWizard, CapSettings, ImageUpload, CapTextArea, TagForm, Offcanvas},
+  components: {
+    CapWizard,
+    CapSettings,
+    ImageUpload,
+    CapTextArea,
+    TagForm,
+    Offcanvas,
+  },
 };
 </script>
 

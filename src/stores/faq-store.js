@@ -1,15 +1,11 @@
-import { ref, watch } from 'vue';
+// noinspection JSValidateTypes
+
 import { defineStore } from 'pinia';
+import { useLocalStorage } from "@vueuse/core";
 
-export const useFaqStore = defineStore('faq', () => {
-  const closed        = ref(false);
-  const boolInStorage = localStorage.getItem('faq');
-  if (boolInStorage) {
-    closed.value = JSON.parse(boolInStorage);
-  }
-
-  watch(() => closed.value, (state) => {
-    localStorage.setItem('faq', JSON.stringify(state));
-  });
-  return {closed};
+export const useFaqStore = defineStore('faq', {
+  state: () => ({
+    /** @type boolean */
+    closed: useLocalStorage('faq-closed', false),
+  }),
 });

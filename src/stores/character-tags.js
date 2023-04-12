@@ -1,6 +1,7 @@
-import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { create } from "jss";
+import { useLocalStorage } from "@vueuse/core";
+import { ref } from "vue";
 
 const jss = create().setup({
                              createGenerateId() {
@@ -10,81 +11,57 @@ const jss = create().setup({
                              },
                            });
 
-class Tag {
-  jss;
-  json;
-
-  constructor(jss, json) {
-    this.jss  = jss;
-    this.json = json;
-  }
-}
-
 export const useCharacterTagsStore = defineStore('characterTags', () => {
-  const tags = ref({});
-
-  const tagsInStorage = localStorage.getItem('characterTags');
-  if (tagsInStorage) {
-    const oldTags = JSON.parse(tagsInStorage);
-    for (const tag of oldTags.array) {
-      for (const [key, value] of Object.entries(tag)) {
-        setTag(key, value);
-
-      }
-    }
+  const tagJss = ref({});
+  const tags   = ref(useLocalStorage('characterTags', {}));
+  for (const [characterName, characterCssJson] of Object.entries(tags.value)) {
+    setTag(characterName, characterCssJson);
   }
 
-  watch(() => tags.value, (state) => {
-    localStorage.setItem('characterTags', JSON.stringify(getAllJson()));
-  }, {deep: true});
- 
-  function getAllJson() {
-    const jsonArray = [];
-    for (const [key, value] of Object.entries(tags.value)) {
-      jsonArray.push({[key]: value.json});
-
+  function setTag(characterName, cssJson) {
+    let oldCssJson = {};
+    if (characterName in tags.value) {
+      oldCssJson = tags.value[characterName];
     }
-    return {array: jsonArray};
+
+    // overwrite the old JSON with the new values
+    for (const [key, value] of Object.entries(cssJson)) {
+      oldCssJson[key] = value;
+    }
+    tags.value[characterName] = oldCssJson;
+
+    if (characterName in tagJss.value) {
+      jss.removeStyleSheet(tagJss.value[characterName]);
+    }
+    const newSheet = jss.createStyleSheet({[characterName]: oldCssJson});
+    newSheet.attach();
+    tagJss.value[characterName] = newSheet;
   }
 
   function getTag(characterName) {
-    const characterTags = tags.value[characterName];
-    if (characterTags) {
-      return characterTags.json;
+    const characterJson = tags.value[characterName];
+    if (characterJson) {
+      return characterJson;
     }
     return null;
-  }
-
-  function getCharacterNames() {
-    return Object.keys(tags.value);
-  }
-
-  function setTag(characterName, cssObj) {
-    let oldJson = {};
-    if (characterName in tags.value) {
-      oldJson = tags.value[characterName].json;
-      jss.removeStyleSheet(tags.value[characterName].jss);
-      delete tags.value[characterName];
-    }
-
-    for (const [key, value] of Object.entries(cssObj)) {
-      oldJson[key] = value;
-    }
-
-    const newSheet = jss.createStyleSheet(
-      {[characterName]: oldJson},
-    );
-    newSheet.attach();
-    tags.value[characterName] = new Tag(newSheet, oldJson);
   }
 
   function removeTag(characterName) {
     if (!(characterName in tags.value)) {
       return;
     }
-    jss.removeStyleSheet(tags.value[characterName].jss);
+    jss.removeStyleSheet(tagJss.value[characterName]);
     delete tags.value[characterName];
   }
 
-  return {setTag, getTag, removeTag, getCharacterNames};
+  function getCharacterNames() {
+    return Object.keys(tags.value);
+  }
+
+  return {
+    setTag,
+    getTag,
+    getCharacterNames,
+    removeTag,
+  };
 });

@@ -7,7 +7,7 @@
     <div class="mb-3">
       You can also use markdown for italics and bold by doing <i>*italics*</i> and <b>**bold**</b>.
     </div>
-    <textarea class="form-control h-50" v-model="textStore._rawText"></textarea>
+    <textarea class="form-control h-50" v-model="capTextStore.rawText"></textarea>
   </div>
 </template>
 
@@ -17,10 +17,9 @@ import { useCapTextStore } from "@/stores/cap-text";
 export default {
   name: "CapTextArea",
   data() {
-    return {textStore: useCapTextStore()};
+    return {capTextStore: useCapTextStore()};
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>
 

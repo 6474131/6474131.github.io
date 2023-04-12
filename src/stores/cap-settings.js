@@ -1,27 +1,15 @@
-import { ref, watch } from 'vue';
+// noinspection JSValidateTypes
+
 import { defineStore } from 'pinia';
+import { useLocalStorage } from "@vueuse/core";
 
-class CapSettings {
-  width;
-  useGivenWidth;
+const baseKey = 'caption-settings-';
 
-  constructor() {
-    this.width         = 0;
-    this.useGivenWidth = false;
-  }
-}
-
-export const useCapSettingsStore = defineStore('capSettings', () => {
-  const settingsObj       = new CapSettings();
-  const settings          = ref(settingsObj);
-  const settingsInStorage = localStorage.getItem('captionSettings');
-  if (settingsInStorage) {
-    settings.value =
-      Object.assign(CapSettings.prototype, JSON.parse(settingsInStorage));
-  }
-
-  watch(() => settings.value, (state) => {
-    localStorage.setItem('captionSettings', JSON.stringify(state));
-  }, {deep: true});
-  return {settings};
+export const useCapSettingsStore = defineStore('capSettings', {
+  state: () => ({
+    /** @type number */
+    width: useLocalStorage(baseKey + 'width', 0),
+    /** @type boolean */
+    useGivenWidth: useLocalStorage(baseKey + 'use-given-width', false),
+  }),
 });

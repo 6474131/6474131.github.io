@@ -1,42 +1,47 @@
 <template>
-  <div class="badge rounded-pill mb-2"
-       :class="[capText.checkQuotes().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">Double
-    quotes
+  <div
+      class="badge rounded-pill mb-2"
+      :class="[capTextStore.checkQuotes().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">Double
+                                                                                                                   quotes
   </div>
-  <div v-if="capText.checkQuotes().length > 0">
-    <div class="mb-3" v-for="line in capText.checkQuotes().slice(0,4)">Double quote error at: {{
+  <div v-if="capTextStore.checkQuotes().length > 0">
+    <div class="mb-3" v-for="line in capTextStore.checkQuotes().slice(0,4)">Double quote error at: {{
         line.slice(0, 40)
-      }}
+                                                                            }}
     </div>
   </div>
   <hr>
-  <div class="badge rounded-pill mb-2"
-       :class="[capText.checkNoTag().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">Untagged
-    Dialogue
+  <div
+      class="badge rounded-pill mb-2"
+      :class="[capTextStore.checkNoTag().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">Untagged
+                                                                                                                  Dialogue
   </div>
   <!--Slice is so that user only sees a few at a time  -->
-  <template v-for="match in capText.checkNoTag().slice(0,5)">
+  <template v-for="match in capTextStore.checkNoTag().slice(0,5)">
     No tag at: {{ match[0] }}
     <div class="input-group mb-3">
       <label for="" class="input-group-text">Select character:</label>
-      <select class="form-select"
-              @change="(e) => {capText.addTagAtPosition(e.target.value, match.index);e.target.value = null;}">
+      <select
+          class="form-select"
+          @change="(e) => {capTextStore.addTagAtPosition(e.target.value, match.index);e.target.value = null;}">
         <option disabled selected>Select character...</option>
-        <option v-for="name in characterStore.getCharacterNames()" :value="name">{{ name }}</option>
+        <option v-for="name in characterTagsStore.getCharacterNames()" :value="name">{{ name }}</option>
       </select>
     </div>
   </template>
-  <template v-if="capText._rawText.length === 0">
+  <template v-if="capTextStore.rawText.length === 0">
     <hr>
-    <div class="text-danger">Add caption text <a class="link-info" data-bs-toggle="offcanvas"
-                                                 href="#offcanvasText">here</a></div>
+    <div class="text-danger">Add caption text <a
+        class="link-info" data-bs-toggle="offcanvas"
+        href="#offcanvasText">here</a></div>
   </template>
-  <template v-if="characterStore.getCharacterNames().length === 0">
+  <template v-if="characterTagsStore.getCharacterNames().length === 0">
     <hr>
-    <div class="text-danger">Add characters <a class="link-info" data-bs-toggle="offcanvas"
-                                               href="#offcanvasCharacters">here</a></div>
+    <div class="text-danger">Add characters <a
+        class="link-info" data-bs-toggle="offcanvas"
+        href="#offcanvasCharacters">here</a></div>
   </template>
-  <template v-if="imageStore.getImages().length === 0">
+  <template v-if="capImageStore.images.length === 0">
     <hr>
     <div class="text-danger">Add images <a class="link-info" data-bs-toggle="offcanvas" href="#offcanvasImages">here</a>
     </div>
@@ -46,30 +51,33 @@
     <div class="form-check form-switch mb-3">
       <label class="form-check-label" for="useWidth">Do you want to use a given width?
       </label>
-      <input class="form-check-input" type="checkbox" role="switch" id="useWidth"
-             v-model="capSettingsStore.settings.useGivenWidth">
+      <input
+          class="form-check-input" type="checkbox" role="switch" id="useWidth"
+          v-model="capSettingsStore.useGivenWidth">
     </div>
-    <div class="row input-group mb-3" v-if="capSettingsStore.settings.useGivenWidth">
-      <label class="input-group-text col-auto" for="capWidth">Character Font Size</label>
-      <input type="number" id="capWidth" class="form-control col-sm-1" placeholder="Size here..."
-             @input="(e) => capSettingsStore.settings.width = parseInt(e.target.value)"
-             :value="capSettingsStore.settings.width">
+    <div class="row input-group mb-3" v-if="capSettingsStore.useGivenWidth">
+      <label class="input-group-text col-auto" for="capWidth">Cap Width</label>
+      <input
+          type="number" id="capWidth" class="form-control col-sm-1" placeholder="Size here..."
+          @input="(e) => capSettingsStore.width = parseInt(e.target.value)"
+          :value="capSettingsStore.width">
       <label class="input-group-text col-auto" for="characterFontSize">px</label>
     </div>
   </form>
   <button type="button" class="btn btn-primary mb-3" @click="downloadCap">Download cap</button>
   <template v-if="progress > 0 && progress < 1">
-    <span class="spinner-border ms-3 me-3" role="status"></span>
-    <span>Progress:  {{ parseInt("" + progress * 100) }}%</span>
+    <span class="spinner-border ms-3 me-3" role="status"></span> <span>Progress:  {{
+      parseInt("" + progress * 100)
+                                                                       }}%</span>
 
   </template>
   <br>
   <div class="form-check form-switch mb-3">
-    <label class="form-check-label" for="transcriptReddit">Do you want a transcript for
-      reddit?
+    <label class="form-check-label" for="transcriptReddit">Do you want a transcript for reddit?
     </label>
-    <input class="form-check-input" type="checkbox" role="switch" id="transcriptReddit"
-           v-model="redditTranscript">
+    <input
+        class="form-check-input" type="checkbox" role="switch" id="transcriptReddit"
+        v-model="redditTranscript">
   </div>
   <button type="button" class="btn btn-secondary mb-3" @click="copyTranscript">Get Transcript</button>
   <br>
@@ -90,13 +98,13 @@ export default {
   name: "CapWizard",
   data() {
     return {
-      capText:          useCapTextStore(),
-      characterStore:   useCharacterTagsStore(),
-      redditTranscript: true,
-      capStyle:         useCapStyleStore(),
-      imageStore:       useImageStore(),
-      capSettingsStore: useCapSettingsStore(),
-      progress:         0,
+      capTextStore:       useCapTextStore(),
+      characterTagsStore: useCharacterTagsStore(),
+      redditTranscript:   true,
+      capStyleStore:      useCapStyleStore(),
+      capImageStore:      useImageStore(),
+      capSettingsStore:   useCapSettingsStore(),
+      progress:           0,
     };
   },
   methods: {
@@ -120,7 +128,7 @@ export default {
       }
     },
     async recordGif(canvas, gifSettings) {
-      const response = await fetch(this.imageStore.getImage(0));
+      const response = await fetch(this.capImageStore.getImage(0));
       const buffer   = await response.arrayBuffer();
       const gifData  = new Uint8Array(buffer);
       const gif      = parseGIF(gifData);
@@ -145,10 +153,9 @@ export default {
         frameCanvas.width  = gif.lsd.width;
         frameCanvas.height = gif.lsd.height;
         const frameCtx     = frameCanvas.getContext("2d");
-        frameCtx.putImageData(
-            new ImageData(frame.patch, frame.dims.width, frame.dims.height),
-            frame.dims.left,
-            frame.dims.top,
+        frameCtx.putImageData(new ImageData(frame.patch, frame.dims.width, frame.dims.height),
+                              frame.dims.left,
+                              frame.dims.top,
         );
         return frameCanvas;
       });
@@ -161,12 +168,11 @@ export default {
           return;
         }
         ctx.resetTransform();
-        ctx.drawImage(
-            frameCanvases[frameIndex],
-            gifSettings.left,
-            gifSettings.top,
-            gifSettings.width,
-            gifSettings.height,
+        ctx.drawImage(frameCanvases[frameIndex],
+                      gifSettings.left,
+                      gifSettings.top,
+                      gifSettings.width,
+                      gifSettings.height,
         );
         frameIndex++;
         CanvasCapture.recordFrame();
@@ -181,17 +187,23 @@ export default {
       const top      = innerBox.top - outerBox.top;
       const left     = innerBox.left - outerBox.left;
 
-      return {top: top, left: left, width: element.width, height: element.height};
+      return {
+        top:    top,
+        left:   left,
+        width:  element.width,
+        height: element.height,
+      };
     },
     imageTypeFromDataUri(dataUri) {
       return dataUri.substring(dataUri.indexOf('/') + 1, dataUri.indexOf(';base64'));
     },
     downloadCap() {
-      this.progress = 0.01;
-      const images  = document.querySelectorAll("img");
-      let maxSize   = 0;
-      if (this.capSettingsStore.settings.useGivenWidth) {
-        maxSize = this.capSettingsStore.settings.width;
+      this.progress   = 0.01;
+      const container = document.getElementById("capContainer");
+      const images    = container.querySelectorAll("img");
+      let maxSize     = 0;
+      if (this.capSettingsStore.useGivenWidth) {
+        maxSize = this.capSettingsStore.width;
       }
       else {
         images.forEach((image) => {
@@ -202,17 +214,16 @@ export default {
       }
       console.log("THIS IS THE MAX SIZE: " + maxSize);
 
-      const imageType = this.imageTypeFromDataUri(this.imageStore.getImage(0));
+      const imageType = this.imageTypeFromDataUri(this.capImageStore.getImage(0));
       console.log("IMAGE TYPE: " + imageType);
 
       const html2canvasOptions = {
-        backgroundColor: this.capStyle.getTextStyle()['background-color'] ?? "#212529",
+        backgroundColor: this.capStyleStore.getTextStyle()['background-color'] ?? "#212529",
         allowTaint:      false,
         scrollX:         0,
         scrollY:         -window.scrollY,
         scale:           1,
       };
-      const container          = document.getElementById("capContainer");
       if (imageType === 'gif' || imageType === 'octet-stream') {
 
         let gifSettings;

@@ -1,5 +1,6 @@
-import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from "vue";
+import { useLocalStorage } from "@vueuse/core";
 import { create } from "jss";
 
 const jss = create().setup({
@@ -10,110 +11,87 @@ const jss = create().setup({
                              },
                            });
 
-class Tag {
-  jss;
-  json;
-
-  constructor(jss, json) {
-    this.jss  = jss;
-    this.json = json;
-  }
-}
-
 export const useCapStyleStore = defineStore('capStyle', () => {
-  const tags = ref({});
+  const styleJss = ref({});
 
-  const tagsInStorage = localStorage.getItem('bodyTags');
-  if (tagsInStorage) {
-    const oldTags = JSON.parse(tagsInStorage);
-    for (const tag of oldTags.array) {
-      for (const [key, value] of Object.entries(tag)) {
-        _setTag(key, value);
+  const capStyles = {
+    'capContainer': {},
+    'capText':      {},
+    'capImg':       {},
+    'capBreak':     {},
+  };
+  const styles    = ref(useLocalStorage('capStyle', capStyles));
 
-      }
-    }
-  }
-  else {
-    for (const sheetName of ['capContainer', 'capText', 'capImg', 'capBreak']) {
-      const newSheet = jss.createStyleSheet(
-        {[sheetName]: {}},
-      );
-      newSheet.attach();
-      tags.value[sheetName] = new Tag(newSheet, {});
+  for (const [styleName, styleCssJson] of Object.entries(styles.value)) {
+    setStyle(styleName, styleCssJson)
 
-    }
   }
 
-  watch(() => tags.value, (state) => {
-    localStorage.setItem('bodyTags', JSON.stringify(getAllJson()));
-  }, {deep: true});
-
-  function _setTag(characterName, cssObj) {
-    let oldJson = {};
-    if (characterName in tags.value) {
-      oldJson = tags.value[characterName].json;
-      jss.removeStyleSheet(tags.value[characterName].jss);
-      delete tags.value[characterName];
+  function setStyle(styleName, cssJson) {
+    let oldCssJson = {};
+    if (styleName in styleJss.value) {
+      oldCssJson = styles.value[styleName];
     }
 
-    for (const [key, value] of Object.entries(cssObj)) {
-      oldJson[key] = value;
+    // overwrite the old JSON with the new values
+    for (const [key, value] of Object.entries(cssJson)) {
+      oldCssJson[key] = value;
     }
+    styles.value[styleName] = oldCssJson;
 
-    const newSheet = jss.createStyleSheet(
-      {[characterName]: oldJson},
-    );
+    if (styleName in styleJss.value) {
+      jss.removeStyleSheet(styleJss.value[styleName]);
+    }
+    const newSheet = jss.createStyleSheet({[styleName]: oldCssJson});
     newSheet.attach();
-    tags.value[characterName] = new Tag(newSheet, oldJson);
+    styleJss.value[styleName] = newSheet;
   }
 
-  function getAllJson() {
-    const jsonArray = [];
-    for (const [key, value] of Object.entries(tags.value)) {
-      jsonArray.push({[key]: value.json});
-
+  function getStyle(styleName) {
+    const styleJson = styles.value[styleName];
+    if (styleJson) {
+      return styleJson;
     }
-    return {array: jsonArray};
+    return null;
   }
 
   function setTextStyle(cssObj) {
     const characterName = 'capContainer';
-    _setTag(characterName, cssObj);
-
+    setStyle(characterName, cssObj);
   }
 
   function getTextStyle() {
-    return tags.value['capContainer'].json;
+    return getStyle('capContainer');
   }
 
   function setCapTextStyle(cssObj) {
     const characterName = 'capText';
-    _setTag(characterName, cssObj);
+    setStyle(characterName, cssObj);
 
   }
 
   function getCapTextStyle() {
-    return tags.value['capText'].json;
+    return getStyle('capText');
   }
 
   function setCapImgStyle(cssObj) {
     const characterName = 'capImg';
-    _setTag(characterName, cssObj);
+    setStyle(characterName, cssObj);
 
   }
 
   function getCapImgStyle() {
-    return tags.value['capImg'].json;
+    return getStyle('capImg');
   }
 
   function setCapBreakStyle(cssObj) {
     const characterName = 'capBreak';
-    _setTag(characterName, cssObj);
+    setStyle(characterName, cssObj);
 
   }
 
   function getCapBreakStyle() {
-    return tags.value['capBreak'].json;
+    return getStyle('capBreak');
   }
 
   function listFonts() {

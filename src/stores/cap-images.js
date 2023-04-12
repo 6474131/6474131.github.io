@@ -1,38 +1,25 @@
-import { ref, watch } from 'vue';
+// noinspection JSValidateTypes
+
 import { defineStore } from 'pinia';
+import { useLocalStorage } from "@vueuse/core";
 
-export const useImageStore = defineStore('images', () => {
-  const images = ref([]);
-
-  const imageInStorage = localStorage.getItem('capImages');
-  if (imageInStorage) {
-    images.value = JSON.parse(imageInStorage);
-  }
-
-  watch(() => images.value, (state) => {
-    localStorage.setItem('capImages', JSON.stringify(state));
-  }, {deep: true});
-
-  function addImage(imgSrc) {
-    images.value.push(imgSrc);
-
-  }
-
-  function removeImage(index) {
-    images.value.splice(index, 1);
-  }
-
-  function getImage(imgNumber) {
-    if (imgNumber < images.value.length) {
-      return images.value[imgNumber];
-
-    }
-    return null;
-  }
-
-  function getImages() {
-    return images.value;
-  }
-
-  return {getImage, getImages, addImage, removeImage};
+export const useImageStore = defineStore('images', {
+  state:   () => ({
+    /** @type string[] */
+    images: useLocalStorage('capImages', []),
+  }),
+  actions: {
+    addImage(newImage) {
+      this.images.push(newImage);
+    },
+    removeImage(index) {
+      this.images.splice(index, 1);
+    },
+    getImage(index) {
+      if (index < this.images.length) {
+        return this.images[index];
+      }
+      return null;
+    },
+  },
 });

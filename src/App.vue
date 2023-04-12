@@ -7,9 +7,10 @@
       </div>
       <div class="border col text-center m-3 px-0">
         <h2>Cap Preview</h2>
-        <div class="capContainer" id="capContainer"
-             style="word-break: break-word">
-          <div class="w-100" v-html="textStore.htmlText"></div>
+        <div
+            class="capContainer" id="capContainer"
+            style="word-break: break-word">
+          <div class="w-100" v-html="capTextStore.htmlText"></div>
         </div>
       </div>
     </div>
@@ -23,9 +24,12 @@ import FaqModal from "@/components/FaqModal.vue";
 
 export default {
   name:       "CapMaker",
-  components: {FaqModal, Sidebar},
+  components: {
+    FaqModal,
+    Sidebar,
+  },
   data() {
-    return {textStore: useCapTextStore()};
+    return {capTextStore: useCapTextStore()};
   },
 };
 </script>

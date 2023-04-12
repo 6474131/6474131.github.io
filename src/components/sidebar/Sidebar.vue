@@ -16,7 +16,10 @@ import SidebarOffcanvases from "@/components/sidebar/SidebarOffcanvases.vue";
 
 export default {
   name:       "Sidebar",
-  components: {SidebarOffcanvases, SidebarElement},
+  components: {
+    SidebarOffcanvases,
+    SidebarElement,
+  },
   mounted() {
     const tooltipTriggerList = document.querySelectorAll('[data-tooltip="tooltip"]');
     const tooltipList        = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
@@ -28,29 +31,24 @@ export default {
           icon:   'bi-people',
           title:  'Characters',
           target: '#offcanvasCharacters',
-        },
-        {
+        }, {
           icon:   'bi-easel',
           title:  'Images',
           target: '#offcanvasImages',
-        },
-        {
+        }, {
           icon:   'bi-body-text',
           title:  'Text',
           target: '#offcanvasText',
-        },
-        {
+        }, {
           icon:   'bi-gear',
           title:  'Settings',
           target: '#offcanvasSettings',
-        },
-        {
+        }, {
           icon:   'bi-magic',
           title:  'Caption Wizard',
           target: '#offcanvasWizard',
           wizard: true,
-        },
-        {
+        }, {
           icon:         'bi-question-lg',
           title:        'FAQ',
           target:       '#faq',
