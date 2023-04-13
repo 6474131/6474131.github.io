@@ -9,8 +9,8 @@ on.
 ## Code
 
 This is a small Vue3 web app, and given that it's my first one I'm not sure its structured particularly well. The
-stores (under the `stores/`) could be a little better, especially with the duplicity between the body style capStyleStore and
-character tag capStyleStore.
+stores (under the `stores/`) could be a little better, especially with the duplicity between the body style
+capStyleStore and character tag capStyleStore.
 
 Some of the components are also larger than I like- mostly because I was having difficulties understanding how to pass
 data both from parent to child and child to parent interchangeably (I found $emit cumbersome and annoying). I ended up
@@ -23,7 +23,8 @@ there's been no need to optimize, at least yet.
 
 If people wish to do pull requests, you're more than welcome. Just make sure all basic functionality works before doing
 so. UI suggestions would also be appreciated, but I tried my hardest to make it intuitive for most end users. My only
-real complaint on this end is that users still have to manually insert image characterTagsStore `{img}` and I would like to
+real complaint on this end is that users still have to manually insert image characterTagsStore `{img}` and I would like
+to
 come up
 with a way so they don't have to (maybe something under the caption wizard...?).
 

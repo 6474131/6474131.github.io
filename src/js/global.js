@@ -1,10 +1,10 @@
 const QUOTE_CHARACTERS = `["“”„”«»]`;
 
 export const reTag = new RegExp(`\\[(.+?)]\\s{0,2}(${QUOTE_CHARACTERS}?.+?(?:${QUOTE_CHARACTERS}|\\n|$))`,
-  "g",
+                                "g",
 );
 export const reDialogue = new RegExp(`${QUOTE_CHARACTERS}.*?${QUOTE_CHARACTERS}`,
-  "g",
+                                     "g",
 );
 export const reItalic = /(?<!\\)\*(.+?)(?<!\\)\*/g;
 export const reBold = /\*\*(.+?)\*\*/g;

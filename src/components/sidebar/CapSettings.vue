@@ -87,7 +87,8 @@
     <div class="row input-group mb-3">
       <label class="input-group-text col-auto">Text Alignment</label>
       <select
-          class="form-select row form-control" @change="(e) => capStyleStore.setTextStyle({'text-align': e.target.value})"
+          class="form-select row form-control"
+          @change="(e) => capStyleStore.setTextStyle({'text-align': e.target.value})"
           :value="capStyleStore.getTextStyle()['text-align']">
         <option value="left">Left</option>
         <option value="center">Center</option>
@@ -97,7 +98,8 @@
     <div class="row input-group mb-3">
       <label class="input-group-text col-auto">Font Family</label>
       <select
-          class="form-select row form-control" @change="(e) => capStyleStore.setTextStyle({'font-family': e.target.value})"
+          class="form-select row form-control"
+          @change="(e) => capStyleStore.setTextStyle({'font-family': e.target.value})"
           :value="capStyleStore.getTextStyle()['font-family']">
         <option v-for="font in capStyleStore.listFonts()" :value="font">{{ font }}</option>
         <option value="revert">Normal</option>

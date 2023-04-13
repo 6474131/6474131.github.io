@@ -23,7 +23,7 @@ export const useCapStyleStore = defineStore('capStyle', () => {
   const styles    = ref(useLocalStorage('capStyle', capStyles));
 
   for (const [styleName, styleCssJson] of Object.entries(styles.value)) {
-    setStyle(styleName, styleCssJson)
+    setStyle(styleName, styleCssJson);
 
   }
 

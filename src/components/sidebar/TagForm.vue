@@ -40,7 +40,10 @@
     </div>
 
     <div class="row mb-3">
-      <button type="button" class="btn btn-danger" @click="capCharacterStore.removeTag(currentCharacter); currentCharacter = ''">
+      <button
+          type="button"
+          class="btn btn-danger"
+          @click="capCharacterStore.removeTag(currentCharacter); currentCharacter = ''">
         Remove Character
       </button>
     </div>
@@ -76,7 +79,6 @@ export default {
     // so that it autosets to the first character
     const names = this.capCharacterStore.getCharacterNames();
     if (names.length > 0) {
-      console.log("NAME: " + names)
       this.currentCharacter = names[0];
     }
   },

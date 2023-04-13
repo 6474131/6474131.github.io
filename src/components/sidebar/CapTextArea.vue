@@ -13,13 +13,57 @@
 
 <script>
 import { useCapTextStore } from "@/stores/cap-text";
+import html2canvas from "html2canvas";
+import { useCapSettingsStore } from "@/stores/cap-settings";
+import { useCapStyleStore } from "@/stores/cap-style";
 
 export default {
   name: "CapTextArea",
   data() {
-    return {capTextStore: useCapTextStore()};
+    return {
+      capTextStore:     useCapTextStore(),
+      capSettingsStore: useCapSettingsStore(),
+      capStyleStore:    useCapStyleStore(),
+    };
   },
-  methods: {},
+  methods: {
+    async createPreview() {
+      const container = document.getElementById("capContainer");
+      const images    = container.querySelectorAll("img");
+      let maxSize     = 0;
+      if (this.capSettingsStore.useGivenWidth) {
+        maxSize = this.capSettingsStore.width;
+      }
+      else {
+        images.forEach((image) => {
+          if (image.naturalWidth > maxSize) {
+            maxSize = image.naturalWidth;
+          }
+        });
+      }
+
+      const html2canvasOptions   = {
+        backgroundColor: this.capStyleStore.getTextStyle()['background-color'] ?? "#212529",
+        allowTaint:      false,
+        scrollX:         0,
+        scrollY:         -window.scrollY,
+        scale:           1,
+      };
+      html2canvasOptions.onclone = (_, element) => {
+        element.style.width = `${maxSize}px`;
+      };
+
+      const canvas = await html2canvas(container, html2canvasOptions);
+      const div    = document.getElementById("capCanvasPreview");
+      while (div.firstChild) {
+        div.removeChild(div.firstChild);
+      }
+      // canvas.width = 100;
+      canvas.style.width = "100%";
+      div.append(canvas);
+
+    },
+  },
 };
 </script>
 

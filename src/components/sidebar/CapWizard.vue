@@ -1,8 +1,8 @@
 <template>
   <div
       class="badge rounded-pill mb-2"
-      :class="[capTextStore.checkQuotes().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">Double
-                                                                                                                   quotes
+      :class="[capTextStore.checkQuotes().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">
+    Double quotes
   </div>
   <div v-if="capTextStore.checkQuotes().length > 0">
     <div class="mb-3" v-for="line in capTextStore.checkQuotes().slice(0,4)">Double quote error at: {{
@@ -13,8 +13,8 @@
   <hr>
   <div
       class="badge rounded-pill mb-2"
-      :class="[capTextStore.checkNoTag().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">Untagged
-                                                                                                                  Dialogue
+      :class="[capTextStore.checkNoTag().length > 0 ? 'bg-danger text-bg-danger' : 'bg-success text-bg-success']">
+    Untagged Dialogue
   </div>
   <!--Slice is so that user only sees a few at a time  -->
   <template v-for="match in capTextStore.checkNoTag().slice(0,5)">
