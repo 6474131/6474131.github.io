@@ -1,8 +1,8 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col">
-        <Sidebar/>
+      <div class="col-1">
+        <Sidebar class="mt-3"/>
       </div>
       <div class="border col text-center m-3 px-0">
         <h2>Cap Preview</h2>

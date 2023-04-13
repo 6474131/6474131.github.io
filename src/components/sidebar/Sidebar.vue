@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column border border-primary m-3 sticky-top" style="width: 4.5rem;">
+  <div class="d-flex flex-column border border-primary sticky-top" style="width: 4.5rem;">
     <ul class="nav nav-flush flex-column text-center">
       <li v-for="element in elements">
         <SidebarElement v-bind="element"/>
