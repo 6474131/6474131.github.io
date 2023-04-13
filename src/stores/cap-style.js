@@ -56,8 +56,8 @@ export const useCapStyleStore = defineStore('capStyle', () => {
   }
 
   function setTextStyle(cssObj) {
-    const characterName = 'capContainer';
-    setStyle(characterName, cssObj);
+    const styleName = 'capContainer';
+    setStyle(styleName, cssObj);
   }
 
   function getTextStyle() {
@@ -65,8 +65,8 @@ export const useCapStyleStore = defineStore('capStyle', () => {
   }
 
   function setCapTextStyle(cssObj) {
-    const characterName = 'capText';
-    setStyle(characterName, cssObj);
+    const styleName = 'capText';
+    setStyle(styleName, cssObj);
 
   }
 
@@ -75,8 +75,8 @@ export const useCapStyleStore = defineStore('capStyle', () => {
   }
 
   function setCapImgStyle(cssObj) {
-    const characterName = 'capImg';
-    setStyle(characterName, cssObj);
+    const styleName = 'capImg';
+    setStyle(styleName, cssObj);
 
   }
 
@@ -85,8 +85,8 @@ export const useCapStyleStore = defineStore('capStyle', () => {
   }
 
   function setCapBreakStyle(cssObj) {
-    const characterName = 'capBreak';
-    setStyle(characterName, cssObj);
+    const styleName = 'capBreak';
+    setStyle(styleName, cssObj);
 
   }
 
