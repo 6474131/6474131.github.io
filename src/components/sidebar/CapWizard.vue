@@ -195,6 +195,9 @@ export default {
       };
     },
     imageTypeFromDataUri(dataUri) {
+      if (dataUri.length === 0) {
+        return "";
+      }
       return dataUri.substring(dataUri.indexOf('/') + 1, dataUri.indexOf(';base64'));
     },
     downloadCap() {
