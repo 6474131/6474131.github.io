@@ -6,6 +6,6 @@ import { useLocalStorage } from "@vueuse/core";
 export const useFaqStore = defineStore('faq', {
   state: () => ({
     /** @type boolean */
-    closed: useLocalStorage('faq-closed', false),
+    closed: useLocalStorage('faq-closed-v1', false),
   }),
 });

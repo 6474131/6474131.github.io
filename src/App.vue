@@ -7,9 +7,9 @@
       <div class="border col text-center m-3 px-0">
         <h2>Cap Preview</h2>
         <div
-            class="capContainer" id="capContainer"
+            id="capContainer" class="capContainer"
             style="word-break: break-word">
-          <div class="w-100" v-html="capTextStore.htmlText"></div>
+          <div class="w-100" v-html="capTextStore.rawHTML"></div>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@ img {
   width: 100%;
 }
 
-p.capText {
+#capContainer.p {
   margin-bottom: 0 !important;
   /*needed to fix some weird kerning bug on mobile*/
   letter-spacing: 0.01px;

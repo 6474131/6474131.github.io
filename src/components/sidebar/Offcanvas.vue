@@ -1,10 +1,10 @@
 <template>
   <div
-      class="offcanvas offcanvas-start" tabindex="-1" :aria-labelledby="offcanvasId + 'label'" :id="offcanvasId"
-      data-bs-scroll="true">
+      :id="offcanvasId" :aria-labelledby="offcanvasId + 'label'" class="offcanvas offcanvas-start" data-bs-scroll="true"
+      tabindex="-1">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" :id="offcanvasId + 'label'">{{ headerName }}</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <h5 :id="offcanvasId + 'label'" class="offcanvas-title">{{ headerName }}</h5>
+      <button aria-label="Close" class="btn-close" data-bs-dismiss="offcanvas" type="button"></button>
     </div>
     <div class="offcanvas-body">
       <slot>Nothing here yet.</slot>
