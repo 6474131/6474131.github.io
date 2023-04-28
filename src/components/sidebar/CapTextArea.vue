@@ -1,40 +1,40 @@
 <template>
-  <div>
     <div>
-      <div class="btn-toolbar" role="toolbar">
-        <div class="btn-group me-2" role="group">
-          <BoldButton :editor-ready="editorReady" :quill="quill"/>
-          <ItalicButton :editor-ready="editorReady" :quill="quill"/>
-          <TextColorButton :editor-ready="editorReady" :quill="quill"/>
-          <SizeButton :editor-ready="editorReady" :quill="quill"/>
-          <AlignmentButton :editor-ready="editorReady" :quill="quill"/>
-          <LineHeightButton :editor-ready="editorReady" :quill="quill"/>
-          <ParagraphHeightButton :editor-ready="editorReady" :quill="quill"/>
-          <BackgroundColorButton/>
-        </div>
-        <div class="btn-group me-2" role="group">
-          <CharacterButton :editor-ready="editorReady" :quill="quill"/>
-          <ImageButton :editor-ready="editorReady" :quill="quill"/>
-          <TranscriptButton/>
-          <DownloadButton/>
-        </div>
-        <div class="btn-group me-2" role="group">
-          <ClearFormatButton :editor-ready="editorReady" :quill="quill"/>
-        </div>
+        <div>
+            <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group me-2" role="group">
+                    <BoldButton :editor-ready="editorReady" :quill="quill"/>
+                    <ItalicButton :editor-ready="editorReady" :quill="quill"/>
+                    <TextColorButton :editor-ready="editorReady" :quill="quill"/>
+                    <SizeButton :editor-ready="editorReady" :quill="quill"/>
+                    <AlignmentButton :editor-ready="editorReady" :quill="quill"/>
+                    <LineHeightButton :editor-ready="editorReady" :quill="quill"/>
+                    <ParagraphHeightButton :editor-ready="editorReady" :quill="quill"/>
+                    <BackgroundColorButton/>
+                </div>
+                <div class="btn-group me-2" role="group">
+                    <CharacterButton :editor-ready="editorReady" :quill="quill"/>
+                    <ImageButton :editor-ready="editorReady" :quill="quill"/>
+                    <TranscriptButton/>
+                    <DownloadButton :editor-ready="editorReady" :quill="quill" @click="updateHTML"/>
+                </div>
+                <div class="btn-group me-2" role="group">
+                    <ClearFormatButton :editor-ready="editorReady" :quill="quill"/>
+                </div>
 
-      </div>
+            </div>
+        </div>
+        <QuillEditor
+                id="qEditor"
+                ref="qEditor"
+                theme=""
+                @ready="ready"/>
+
+        <template v-if="editorReady">
+            <!--      {{ capTextStore.rawDelta }}-->
+        </template>
+
     </div>
-    <QuillEditor
-        id="qEditor"
-        ref="qEditor"
-        theme=""
-        @ready="ready"/>
-
-    <template v-if="editorReady">
-      <!--      {{ capTextStore.rawDelta }}-->
-    </template>
-
-  </div>
 </template>
 
 <script>
@@ -62,6 +62,8 @@ import { TextColorStyle } from "@/js/text-color";
 import ClearFormatButton from "@/components/editor_buttons/ClearFormatButton.vue";
 import { ParagraphHeightStyle } from "@/js/paragraph-height";
 import ParagraphHeightButton from "@/components/editor_buttons/ParagraphHeightButton.vue";
+import { CustomImage, updateImageSrc } from "@/js/custom-image";
+import { useImageStore } from "@/stores/cap-images";
 
 export default {
   name:       "CapTextArea",
@@ -86,7 +88,9 @@ export default {
       capTextStore:     useCapTextStore(),
       capSettingsStore: useCapSettingsStore(),
       capStyleStore:    useCapStyleStore(),
+      capImageStore:    useImageStore(),
       editorReady:      false,
+      setImageTimer:    null,
     };
   },
   created() {
@@ -98,6 +102,7 @@ export default {
     Quill.register(LineHeightStyle, true);
     Quill.register(TextColorStyle, true);
     Quill.register(ParagraphHeightStyle, true);
+    Quill.register(CustomImage, true);
 
     const BlockBlot = Quill.import('blots/block');
 
@@ -129,6 +134,11 @@ export default {
 
     Quill.register(MyImage, true);
 
+    this.imageTimer = setInterval(this.updateHTML, 500);
+
+  },
+  beforeUnmount() {
+    clearInterval(this.imageTimer);
   },
   computed: {
     quill() {
@@ -143,21 +153,28 @@ export default {
       this.$refs.qEditor.getQuill().setContents(this.capTextStore.rawDelta);
       this.editorReady = true;
 
-      this.$refs.qEditor.getQuill().on('editor-change', () => {
-        this.capTextStore.rawDelta = this.$refs.qEditor.getContents();
-        // should probably be refactored, but basically this is necessary because the default quill getText purposefully
-        // does not account for embeds... something that matters when doing regex on the string
-        this.capTextStore.rawText =
-            this.capTextStore.rawDelta.filter(op => (typeof op.insert === 'string') || op.insert.image != null)
-                .map(op => {
-                  if (op.insert.image != null) {
-                    return " ";
-                  }
-                  return op.insert;
-                })
-                .join('');
-        this.capTextStore.rawHTML = this.$refs.qEditor.getHTML();
-      });
+      this.editorChange();
+      this.updateHTML();
+      this.$refs.qEditor.getQuill().on('editor-change', this.editorChange);
+    },
+    editorChange() {
+      this.capTextStore.rawDelta = this.$refs.qEditor.getContents();
+      // should probably be refactored, but basically this is necessary because the default quill getText purposefully
+      // does not account for embeds... something that matters when doing regex on the string
+      this.capTextStore.rawText =
+        this.capTextStore.rawDelta.filter(op => (typeof op.insert === 'string') || op.insert.customimage != null)
+            .map(op => {
+              if (op.insert.customimage != null) {
+                return " ";
+              }
+              return op.insert;
+            })
+            .join('');
+
+    },
+    updateHTML() {
+      this.capTextStore.rawHTML = this.$refs.qEditor.getHTML();
+      updateImageSrc();
     },
   },
 };
@@ -165,34 +182,34 @@ export default {
 
 <style>
 .ql-clipboard {
-  left: -100000px;
-  height: 1px;
-  overflow-y: hidden;
-  position: absolute;
-  top: 50%;
+    left: -100000px;
+    height: 1px;
+    overflow-y: hidden;
+    position: absolute;
+    top: 50%;
 }
 
 .ql-editor {
-  box-sizing: border-box;
-  line-height: 1.42;
-  height: 100%;
-  outline: none;
-  overflow-y: auto;
-  padding: 12px 15px;
-  tab-size: 4;
-  -moz-tab-size: 4;
-  text-align: left;
-  white-space: pre-wrap;
-  word-wrap: break-word;
+    box-sizing: border-box;
+    line-height: 1.42;
+    height: 100%;
+    outline: none;
+    overflow-y: auto;
+    padding: 12px 15px;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .ql-container {
-  border: 1px solid white;
-  font-size: 16px;
+    border: 1px solid white;
+    font-size: 16px;
 }
 
 .ql-container img {
-  max-width: 100%
+    max-width: 100%
 }
 
 </style>

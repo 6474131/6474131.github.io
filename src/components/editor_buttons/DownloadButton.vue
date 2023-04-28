@@ -21,9 +21,20 @@ import { useCharacterTagsStore } from "@/stores/character-tags";
 import { useCapStyleStore } from "@/stores/cap-style";
 import { useImageStore } from "@/stores/cap-images";
 import { useCapSettingsStore } from "@/stores/cap-settings";
+import { updateImageSrc } from "@/js/custom-image";
 
 export default {
   name: "DownloadButton",
+  props: {
+    quill:       {
+      default:  null,
+      required: true,
+    },
+    editorReady: {
+      default:  false,
+      required: true,
+    },
+  },
   data() {
     return {
       capTextStore:       useCapTextStore(),
