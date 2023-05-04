@@ -1,13 +1,13 @@
 <template>
-  <Offcanvas header-name="Characters" offcanvas-id="offcanvasCharacters">
-    <TagForm/>
-  </Offcanvas>
-  <Offcanvas header-name="Cap Text" offcanvas-id="offcanvasText">
-    <CapTextArea class="h-100"/>
-  </Offcanvas>
-  <Offcanvas header-name="Settings" offcanvas-id="offcanvasSettings">
-    <CapSettings/>
-  </Offcanvas>
+    <Offcanvas header-name="Characters" offcanvas-id="offcanvasCharacters">
+        <TagForm/>
+    </Offcanvas>
+    <Offcanvas header-name="Cap Text" offcanvas-id="offcanvasText">
+        <CapTextArea class="h-100"/>
+    </Offcanvas>
+    <Offcanvas header-name="Settings" offcanvas-id="offcanvasSettings">
+        <CapSettings/>
+    </Offcanvas>
 </template>
 
 <script>

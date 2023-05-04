@@ -1,11 +1,11 @@
 <template>
     <form class="container-fluid">
         <div class="input-group row mb-3">
-            <label for="capNormalColor" class="input-group-text col-auto">Normal Cap Text Color</label>
+            <label class="input-group-text col-auto" for="capNormalColor">Normal Cap Text Color</label>
             <input
-                    id="capNormalColor" type="color" class="form-control-color form-control"
-                    @input="(e) => capStyleStore.setTextStyle({'color': e.target.value})"
-                    :value="capStyleStore.getTextStyle()['color']">
+                    id="capNormalColor" :value="capStyleStore.getTextStyle()['color']" class="form-control-color form-control"
+                    type="color"
+                    @input="(e) => capStyleStore.setTextStyle({'color': e.target.value})">
         </div>
         <div class="row input-group mb-3">
             <label class="input-group-text col-auto" for="capPaddingLeft">Text Padding Left</label>

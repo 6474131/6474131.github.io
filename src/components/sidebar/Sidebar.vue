@@ -1,12 +1,12 @@
 <template>
-  <div class="d-flex flex-column border border-primary sticky-top" style="width: 4.5rem;">
-    <ul class="nav nav-flush flex-column text-center">
-      <li v-for="element in elements">
-        <SidebarElement v-tooltip v-bind="element"/>
-      </li>
-    </ul>
-    <SidebarOffcanvases/>
-  </div>
+    <div class="d-flex flex-column border border-primary sticky-top" style="width: 4.5rem;">
+        <ul class="nav nav-flush flex-column text-center">
+            <li v-for="element in elements">
+                <SidebarElement v-tooltip v-bind="element"/>
+            </li>
+        </ul>
+        <SidebarOffcanvases/>
+    </div>
 </template>
 
 <script>

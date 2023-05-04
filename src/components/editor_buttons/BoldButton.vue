@@ -1,10 +1,10 @@
 <template>
-  <button
-      v-tooltip
-      :class="{active: active}"
-      class="bi-type-bold btn btn-outline-primary"
-      title="Bold"
-      @click="bold"></button>
+    <button
+            v-tooltip
+            :class="{active: active}"
+            class="bi-type-bold btn btn-outline-primary"
+            title="Bold"
+            @click="bold"></button>
 </template>
 
 <script>
@@ -30,7 +30,8 @@ export default {
     editorReady() {
       this.quill.on('editor-change', () => {
         const range = this.quill.getSelection();
-        this.active = range ? this.quill.getFormat(range.index, range.length).hasOwnProperty('bold') : false;
+        this.active = range ? this.quill.getFormat(range.index, range.length)
+                                  .hasOwnProperty('bold') : false;
       });
     },
   },

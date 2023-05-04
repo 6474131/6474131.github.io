@@ -3,13 +3,14 @@ import { create } from "jss";
 import { useLocalStorage } from "@vueuse/core";
 import { ref } from "vue";
 
-const jss = create().setup({
-                             createGenerateId() {
-                               return function (rule) {
-                                 return rule.key;
-                               };
-                             },
-                           });
+const jss = create()
+  .setup({
+           createGenerateId() {
+             return function (rule) {
+               return rule.key;
+             };
+           },
+         });
 
 export const useCharacterTagsStore = defineStore('characterTags', () => {
   const tagJss = ref({});

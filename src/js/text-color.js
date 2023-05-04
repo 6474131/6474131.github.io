@@ -2,11 +2,12 @@ import { Quill } from "@vueup/vue-quill";
 
 const Parchment = Quill.import('parchment');
 
-export const TextColorStyle = new Parchment.Attributor.Style('textcolor',
-                                                             'color',
-                                                             {
-                                                               scope: Parchment.Scope.INLINE,
-                                                             },
+export const TextColorStyle = new Parchment.Attributor.Style(
+  'textcolor',
+  'color',
+  {
+    scope: Parchment.Scope.INLINE,
+  },
 );
 
 // so that it correctly retrieves as RGB

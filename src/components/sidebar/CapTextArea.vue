@@ -1,5 +1,8 @@
 <template>
     <div>
+        <template v-if="editorReady">
+            Quoted correctly: {{ quotedCorrectlyBool }}
+        </template>
         <div>
             <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group me-2" role="group">
@@ -31,7 +34,7 @@
                 @ready="ready"/>
 
         <template v-if="editorReady">
-            <!--      {{ capTextStore.rawDelta }}-->
+            <!--            {{ capTextStore.rawDelta }}-->
         </template>
 
     </div>
@@ -62,8 +65,9 @@ import { TextColorStyle } from "@/js/text-color";
 import ClearFormatButton from "@/components/editor_buttons/ClearFormatButton.vue";
 import { ParagraphHeightStyle } from "@/js/paragraph-height";
 import ParagraphHeightButton from "@/components/editor_buttons/ParagraphHeightButton.vue";
-import { CustomImage, updateImageSrc } from "@/js/custom-image";
+import { CustomImage } from "@/js/custom-image";
 import { useImageStore } from "@/stores/cap-images";
+import { QUOTE_CHARACTERS } from "@/js/global";
 
 export default {
   name:       "CapTextArea",
@@ -85,12 +89,13 @@ export default {
   },
   data() {
     return {
-      capTextStore:     useCapTextStore(),
-      capSettingsStore: useCapSettingsStore(),
-      capStyleStore:    useCapStyleStore(),
-      capImageStore:    useImageStore(),
-      editorReady:      false,
-      setImageTimer:    null,
+      capTextStore:        useCapTextStore(),
+      capSettingsStore:    useCapSettingsStore(),
+      capStyleStore:       useCapStyleStore(),
+      capImageStore:       useImageStore(),
+      editorReady:         false,
+      setImageTimer:       null,
+      quotedCorrectlyBool: false,
     };
   },
   created() {
@@ -109,7 +114,6 @@ export default {
     class CustomBlockBlot extends BlockBlot {
       static create(value) {
         const node = super.create(value);
-        node.setAttribute('style', 'text-align: center; font-size: 16px');
         node.setAttribute('class', 'capText');
 
         return node;
@@ -150,12 +154,14 @@ export default {
   },
   methods:  {
     ready() {
-      this.$refs.qEditor.getQuill().setContents(this.capTextStore.rawDelta);
+      this.$refs.qEditor.getQuill()
+          .setContents(this.capTextStore.rawDelta);
       this.editorReady = true;
 
       this.editorChange();
       this.updateHTML();
-      this.$refs.qEditor.getQuill().on('editor-change', this.editorChange);
+      this.$refs.qEditor.getQuill()
+          .on('editor-change', this.editorChange);
     },
     editorChange() {
       this.capTextStore.rawDelta = this.$refs.qEditor.getContents();
@@ -171,10 +177,29 @@ export default {
             })
             .join('');
 
+      this.quotedCorrectlyBool = this.quotedCorrectly();
+
     },
     updateHTML() {
       this.capTextStore.rawHTML = this.$refs.qEditor.getHTML();
-      updateImageSrc();
+      // updateImageSrc();
+    },
+    quotedCorrectly() {
+      const filterResult = this.capTextStore.rawDelta
+                               .filter(
+                                 op => (typeof op.insert === 'string'))
+                               .map(op => {
+                                 if (!op.attributes && op.insert !== "\n") {
+                                   const quoteCheck = op.insert.match(
+                                     new RegExp(`${QUOTE_CHARACTERS}`));
+                                   if (quoteCheck) {
+                                     return op.insert;
+                                   }
+                                   return null;
+                                 }
+                               })
+                               .filter(thing => thing != null);
+      return filterResult.length === 0;
     },
   },
 };

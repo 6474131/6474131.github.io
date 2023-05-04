@@ -35,12 +35,14 @@ export async function recordGif(canvas, gifSettings, progressCallback) {
     frameCanvas.width  = gif.lsd.width;
     frameCanvas.height = gif.lsd.height;
     const frameCtx     = frameCanvas.getContext("2d");
-    frameCtx.putImageData(new ImageData(frame.patch,
-                                        frame.dims.width,
-                                        frame.dims.height,
-                          ),
-                          frame.dims.left,
-                          frame.dims.top,
+    frameCtx.putImageData(
+      new ImageData(
+        frame.patch,
+        frame.dims.width,
+        frame.dims.height,
+      ),
+      frame.dims.left,
+      frame.dims.top,
     );
     return frameCanvas;
   });
@@ -53,11 +55,12 @@ export async function recordGif(canvas, gifSettings, progressCallback) {
       return;
     }
     ctx.resetTransform();
-    ctx.drawImage(frameCanvases[frameIndex],
-                  gifSettings.left,
-                  gifSettings.top,
-                  gifSettings.width,
-                  gifSettings.height,
+    ctx.drawImage(
+      frameCanvases[frameIndex],
+      gifSettings.left,
+      gifSettings.top,
+      gifSettings.width,
+      gifSettings.height,
     );
     frameIndex++;
     CanvasCapture.recordFrame();
@@ -71,7 +74,8 @@ export function imageTypeFromDataUri(dataUri) {
   if (dataUri == null || dataUri.length === 0) {
     return "";
   }
-  return dataUri.substring(dataUri.indexOf('/') + 1,
-                           dataUri.indexOf(';base64'),
+  return dataUri.substring(
+    dataUri.indexOf('/') + 1,
+    dataUri.indexOf(';base64'),
   );
 }

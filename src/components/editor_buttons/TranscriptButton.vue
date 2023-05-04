@@ -1,25 +1,25 @@
 <template>
-  <div v-tooltip class="btn-group" role="group" title="Copy Transcript">
-    <button
-        aria-expanded="false"
-        class="btn btn-outline-primary dropdown-toggle"
-        data-bs-toggle="dropdown"
-        type="button"><i class="bi-file-text"/>
-    </button>
-    <ul class="dropdown-menu">
-      <li>
-        <div class="dropdown-item">
-          <button class="btn" @click="copyTranscript(false)">Normal Transcript</button>
-        </div>
-      </li>
-      <li>
-        <div class="dropdown-item">
-          <button class="btn" @click="copyTranscript(true)">Reddit Transcript</button>
-        </div>
-      </li>
-    </ul>
+    <div v-tooltip class="btn-group" role="group" title="Copy Transcript">
+        <button
+                aria-expanded="false"
+                class="btn btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                type="button"><i class="bi-file-text"/>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <div class="dropdown-item">
+                    <button class="btn" @click="copyTranscript(false)">Normal Transcript</button>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown-item">
+                    <button class="btn" @click="copyTranscript(true)">Reddit Transcript</button>
+                </div>
+            </li>
+        </ul>
 
-  </div>
+    </div>
 
 </template>
 

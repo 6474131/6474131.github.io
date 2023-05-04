@@ -1,23 +1,23 @@
 <template>
-  <div class="btn-group" role="group">
-    <button
-        v-tooltip
-        :class="{active: active}"
-        class="btn btn-outline-primary"
-        title="Color Character Dialogue"
-        @click="active = !active"><i class="bi-people"/>
-    </button>
-    <select
-        v-model="currentCharacter"
-        v-tooltip
-        class="btn btn-outline-primary dropdown-toggle"
-        title="Chosen Character">
-      <option v-for="{name, val} in characterList" :value="val" class="dropdown-item">{{
-          name
-                                                                                      }}
-      </option>
-    </select>
-  </div>
+    <div class="btn-group" role="group">
+        <button
+                v-tooltip
+                :class="{active: active}"
+                class="btn btn-outline-primary"
+                title="Color Character Dialogue"
+                @click="active = !active"><i class="bi-people"/>
+        </button>
+        <select
+                v-model="currentCharacter"
+                v-tooltip
+                class="btn btn-outline-primary dropdown-toggle"
+                title="Chosen Character">
+            <option v-for="{name, val} in characterList" :value="val" class="dropdown-item">{{
+                name
+                }}
+            </option>
+        </select>
+    </div>
 </template>
 
 <script>

@@ -1,21 +1,21 @@
 <template>
-  <div v-tooltip class="btn-group" role="group" title="Paragraph Height">
-    <button
-        aria-expanded="false"
-        class="btn btn-outline-primary dropdown-toggle"
-        data-bs-toggle="dropdown"
-        type="button"> {{ shownLineHeight }}
-    </button>
-    <ul class="dropdown-menu" style="min-width: 25px; max-height: 500px; overflow-y: auto; overflow-x: clip">
-      <li><a
-          v-for="value in paragraphHeightArray"
-          v-tooltip
-          class="dropdown-item"
-          href="#"
-          @click="this.paragraphHeight = value; changeParagraphHeight()">{{ value }}</a>
-      </li>
-    </ul>
-  </div>
+    <div v-tooltip class="btn-group" role="group" title="Paragraph Height">
+        <button
+                aria-expanded="false"
+                class="btn btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                type="button"> {{ shownLineHeight }}
+        </button>
+        <ul class="dropdown-menu" style="min-width: 25px; max-height: 500px; overflow-y: auto; overflow-x: clip">
+            <li><a
+                    v-for="value in paragraphHeightArray"
+                    v-tooltip
+                    class="dropdown-item"
+                    href="#"
+                    @click="this.paragraphHeight = value; changeParagraphHeight()">{{ value }}</a>
+            </li>
+        </ul>
+    </div>
 
 </template>
 

@@ -1,14 +1,16 @@
 export const QUOTE_CHARACTERS = `["“”„”«»]`;
 
-export const reTag = new RegExp(`\\[(.+?)]\\s{0,2}(${QUOTE_CHARACTERS}?.+?(?:${QUOTE_CHARACTERS}|\\n|$))`,
-                                "g",
+export const reTag      = new RegExp(
+  `\\[(.+?)]\\s{0,2}(${QUOTE_CHARACTERS}?.+?(?:${QUOTE_CHARACTERS}|\\n|$))`,
+  "g",
 );
-export const reDialogue = new RegExp(`${QUOTE_CHARACTERS}.*?${QUOTE_CHARACTERS}`,
-                                     "g",
+export const reDialogue = new RegExp(
+  `${QUOTE_CHARACTERS}.*?${QUOTE_CHARACTERS}`,
+  "g",
 );
-export const reItalic = /(?<!\\)\*(.+?)(?<!\\)\*/g;
-export const reBold = /\*\*(.+?)\*\*/g;
-export const reImg = /\{img(\d+)?}/g;
+export const reItalic   = /(?<!\\)\*(.+?)(?<!\\)\*/g;
+export const reBold     = /\*\*(.+?)\*\*/g;
+export const reImg      = /\{img(\d+)?}/g;
 
 /**
  * Validates the return of quill.getFormat, as in if it's multiple values or if
@@ -20,11 +22,13 @@ export function validateFormat(format) {
   if (Array.isArray(format)) {
     return null;
   }
-  else if (format == null) {
-    return null;
-  }
   else {
-    return format;
+    if (format == null) {
+      return null;
+    }
+    else {
+      return format;
+    }
   }
 
 }

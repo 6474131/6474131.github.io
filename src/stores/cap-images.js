@@ -1,12 +1,11 @@
 // noinspection JSValidateTypes
 
 import { defineStore } from 'pinia';
-import { useLocalStorage } from "@vueuse/core";
 
 export const useImageStore = defineStore('images', {
   state:   () => ({
     /** @type string[] */
-    images: useLocalStorage('capImages', []),
+    images: [],
   }),
   actions: {
     addImage(newImage) {

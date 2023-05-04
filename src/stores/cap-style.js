@@ -3,13 +3,14 @@ import { ref } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { create } from "jss";
 
-const jss = create().setup({
-                             createGenerateId() {
-                               return function (rule) {
-                                 return rule.key;
-                               };
-                             },
-                           });
+const jss = create()
+  .setup({
+           createGenerateId() {
+             return function (rule) {
+               return rule.key;
+             };
+           },
+         });
 
 export const useCapStyleStore = defineStore('capStyle', () => {
   const styleJss = ref({});

@@ -1,16 +1,16 @@
 <template>
-  <template v-if="progress == null">
-    <button
-        v-tooltip
-        class="bi-download btn btn-outline-primary"
-        title="Download Cap"
-        @click="downloadCap"></button>
-  </template>
-  <template v-else>
-    <button class="btn btn-outline-primary" type="button"><span
-        class="spinner-border spinner-border-sm"
-        role="status"></span></button>
-  </template>
+    <template v-if="progress == null">
+        <button
+                v-tooltip
+                class="bi-download btn btn-outline-primary"
+                title="Download Cap"
+                @click="downloadCap"></button>
+    </template>
+    <template v-else>
+        <button class="btn btn-outline-primary" type="button"><span
+                class="spinner-border spinner-border-sm"
+                role="status"></span></button>
+    </template>
 </template>
 
 <script>
@@ -21,10 +21,9 @@ import { useCharacterTagsStore } from "@/stores/character-tags";
 import { useCapStyleStore } from "@/stores/cap-style";
 import { useImageStore } from "@/stores/cap-images";
 import { useCapSettingsStore } from "@/stores/cap-settings";
-import { updateImageSrc } from "@/js/custom-image";
 
 export default {
-  name: "DownloadButton",
+  name:  "DownloadButton",
   props: {
     quill:       {
       default:  null,
@@ -103,18 +102,19 @@ export default {
           gifSettings = getGifSettings(img, element);
         };
 
-        html2canvas(container, html2canvasOptions).then((canvas) => {
-          recordGif(canvas, gifSettings, (progress) => {
-            console.log("PROGRESS " + progress);
-            if (progress > 0) {
-              this.progress = progress;
-            }
-            if (progress === 1) {
-              this.progress = null;
-            }
-          });
+        html2canvas(container, html2canvasOptions)
+          .then((canvas) => {
+            recordGif(canvas, gifSettings, (progress) => {
+              console.log("PROGRESS " + progress);
+              if (progress > 0) {
+                this.progress = progress;
+              }
+              if (progress === 1) {
+                this.progress = null;
+              }
+            });
 
-        });
+          });
 
       }
       else {
@@ -122,10 +122,11 @@ export default {
           element.style.width = `${maxSize}px`;
         };
 
-        html2canvas(container, html2canvasOptions).then((canvas) => {
-          this.saveAs(canvas.toDataURL(), 'cap.png');
-          this.progress = null;
-        });
+        html2canvas(container, html2canvasOptions)
+          .then((canvas) => {
+            this.saveAs(canvas.toDataURL(), 'cap.png');
+            this.progress = null;
+          });
       }
 
     },

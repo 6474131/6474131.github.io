@@ -3,7 +3,7 @@ import { Quill } from "@vueup/vue-quill";
 const Parchment = Quill.import('parchment');
 
 const config = {
-  scope: Parchment.Scope.BLOCK,
+  scope:     Parchment.Scope.BLOCK,
   whitelist: [
     'left',
     'center',
@@ -12,7 +12,8 @@ const config = {
   ],
 };
 
-export const AlignmentStyle = new Parchment.Attributor.Style('alignment',
-                                                             'text-align',
-                                                             config,
+export const AlignmentStyle = new Parchment.Attributor.Style(
+  'alignment',
+  'text-align',
+  config,
 );

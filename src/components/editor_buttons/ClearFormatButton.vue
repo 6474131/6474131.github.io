@@ -1,10 +1,10 @@
 <template>
 
-  <button
-      v-tooltip
-      class="bi-brush btn btn-outline-primary"
-      title="Clear Format"
-      @click="clearFormat"></button>
+    <button
+            v-tooltip
+            class="bi-brush btn btn-outline-primary"
+            title="Clear Format"
+            @click="clearFormat"></button>
 </template>
 
 <script>

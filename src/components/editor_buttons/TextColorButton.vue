@@ -1,10 +1,10 @@
 <template>
-  <div class="btn-group" role="group">
-    <input
-        v-tooltip :value="this.textColor" class="btn btn-outline-primary" style="height: 100%"
-        title="Text Color"
-        type="color" @input="changeTextColor">
-  </div>
+    <div class="btn-group" role="group">
+        <input
+                v-tooltip :value="this.textColor" class="btn btn-outline-primary" style="height: 100%"
+                title="Text Color"
+                type="color" @input="changeTextColor">
+    </div>
 </template>
 
 <script>

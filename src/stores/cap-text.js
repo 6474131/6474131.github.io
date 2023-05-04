@@ -19,12 +19,7 @@ export const useCapTextStore = defineStore('capText', {
     rawText:  "",
     rawHTML:  "",
   }),
-  getters: {
-    htmlText(state) {
-      return "";
-      // return this.convertText(state.rawText);
-    },
-  },
+  getters: {},
   actions: {
     /**
      * Finds the index of the start of the line at the given index.
@@ -32,14 +27,18 @@ export const useCapTextStore = defineStore('capText', {
      * @returns {number} The index of the start of the line.
      */
     getLineStartIndex(index) {
+      if (index === 0) {
+        return 0;
+      }
+
       let lineIndex = 0;
 
       for (let i = 0; i < index; i++) {
         if (this.rawText[i] === '\n') {
-          lineIndex = i;
+          lineIndex = i + 1;
         }
       }
-      return lineIndex + 1;
+      return lineIndex;
     },
     /**
      * Gets the line of text at the given index.
@@ -105,29 +104,6 @@ export const useCapTextStore = defineStore('capText', {
 
       });
       return text;
-    },
-    checkQuotes() {
-      // const lines    = this.rawText.split('\n');
-      // const badLines = [];
-      // for (const line of lines) {
-      //   if ((line.match(/"/g) || []).length % 2 === 1) {
-      //     badLines.push(line);
-      //   }
-      // }
-      // return badLines;
-      return true;
-    },
-    checkNoTag() {
-      // const badLines = [];
-      // // so that it doesn't get mixed up on lines with multiple sets of
-      // double // quotes const removedTagText = this.rawText.replaceAll(reTag,
-      // (match) => { // can't just replace with an empty string or else the
-      // positioning for // matches will be off return '
-      // '.repeat(match.length); });  const matches =
-      // removedTagText.matchAll(reDialogue); if (matches) { for (const match
-      // of matches) { // this gives the whole match for some reason // I will
-      // never understand javascript badLines.push(match); } } return badLines;
-      return [];
     },
   },
 
