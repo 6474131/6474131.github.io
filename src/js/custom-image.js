@@ -1,5 +1,4 @@
 import { Quill } from "@vueup/vue-quill";
-import { useImageStore } from "@/stores/cap-images";
 
 let EmbedBlot = Quill.import('blots/block/embed');
 
@@ -11,12 +10,13 @@ export class CustomImage extends EmbedBlot {
 
   static create(value) {
     const node = super.create(value);
-    node.setAttribute('data-img', value);
+    node.setAttribute('src', value);
+    node.setAttribute('class', 'capImg');
     return node;
   }
 
   static value(domNode) {
-    return domNode.getAttribute('data-img');
+    return domNode.getAttribute('src');
   }
 
   format(name, value) {
@@ -30,18 +30,6 @@ export class CustomImage extends EmbedBlot {
     }
     else {
       super.format(name, value);
-    }
-  }
-}
-
-export function updateImageSrc() {
-  const capImageStore = useImageStore();
-  const images        = document.getElementsByTagName('img');
-  for (const image of images) {
-    const imgIndex = image.getAttribute('data-img');
-    if (imgIndex && image.parentNode.classList.contains('ql-editor')) {
-      image.setAttribute('src', capImageStore.getImage(imgIndex));
-
     }
   }
 }

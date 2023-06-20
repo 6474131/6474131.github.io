@@ -1,6 +1,6 @@
 {
   "name": "web_cap_maker",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://6474131.github.io",
   "private": true,
   "scripts": {
@@ -15,16 +15,18 @@
     "bootstrap": "^5.3.0-alpha1",
     "bootstrap-icons": "^1.10.3",
     "canvas-capture": "^2.0.6",
+    "firebase": "^9.22.2",
     "gifuct-js": "^2.1.2",
     "html2canvas": "^1.4.1",
     "jss": "^10.9.2",
     "jss-preset-default": "^10.9.2",
     "pinia": "^2.0.28",
     "vue": "^3.2.45",
-    "vue-uuid": "^3.0.0"
+    "vue-uuid": "^3.0.0",
+    "vuefire": "^3.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
-    "vite": "^4.0.0"
+    "vite": "^4.3.9"
   }
 }

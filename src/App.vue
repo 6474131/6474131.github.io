@@ -1,20 +1,22 @@
 <template>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-1">
-                <Sidebar class="mt-3"/>
-            </div>
-            <div class="border col text-center m-3 px-0">
-                <h2>Cap Preview</h2>
-                <div
-                        id="capContainer" class="capContainer"
-                        style="word-break: break-word">
-                    <div class="w-100" v-html="capTextStore.rawHTML"></div>
-                </div>
-            </div>
+  <LoginPage v-if="!userLoggedIn"/>
+  <div v-else class="container-fluid">
+    <div class="row">
+      <div class="col-1">
+        <Sidebar class="mt-3"/>
+      </div>
+      <div class="border col text-center m-3 px-0">
+        <h2>Cap Preview</h2>
+        <div
+          id="capContainer" class="capContainer"
+          style="word-break: break-word">
+          <div class="w-100" v-html="capTextStore.rawHTML"></div>
         </div>
+      </div>
     </div>
-    <FaqModal/>
+  </div>
+  <FaqModal/>
+
 </template>
 
 <script>
@@ -24,10 +26,13 @@ import FaqModal from "@/components/FaqModal.vue";
 import html2canvas from "html2canvas";
 import { useCapSettingsStore } from "@/stores/cap-settings";
 import { useCapStyleStore } from "@/stores/cap-style";
+import LoginPage from "@/components/LoginPage.vue";
+import { useCurrentUser } from "vuefire";
 
 export default {
   name:       "CapMaker",
   components: {
+    LoginPage,
     FaqModal,
     Sidebar,
   },
@@ -37,6 +42,7 @@ export default {
       capSettingsStore: useCapSettingsStore(),
       capStyleStore:    useCapStyleStore(),
       intervalTimer:    null,
+      userLoggedIn:     useCurrentUser(),
     };
   },
   methods: {
@@ -58,6 +64,7 @@ export default {
       const html2canvasOptions   = {
         backgroundColor: this.capStyleStore.getTextStyle()['background-color'] ?? "#212529",
         allowTaint:      false,
+        useCORS:         true,
         scrollX:         0,
         scrollY:         -window.scrollY,
         scale:           1,
@@ -83,13 +90,13 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Lato&family=Lobster+Two&family=Roboto&family=Tinos&display=swap');
 
 img {
-    width: 100%;
+  width: 100%;
 }
 
 #capContainer.p {
-    margin-bottom: 0 !important;
-    /*needed to fix some weird kerning bug on mobile*/
-    letter-spacing: 0.01px;
+  margin-bottom: 0 !important;
+  /*needed to fix some weird kerning bug on mobile*/
+  letter-spacing: 0.01px;
 }
 
 </style>

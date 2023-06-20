@@ -1,43 +1,43 @@
 <template>
+  <div>
+    <template v-if="editorReady">
+      <!--            Quoted correctly: {{ quotedCorrectlyBool }}-->
+    </template>
     <div>
-        <template v-if="editorReady">
-            Quoted correctly: {{ quotedCorrectlyBool }}
-        </template>
-        <div>
-            <div class="btn-toolbar" role="toolbar">
-                <div class="btn-group me-2" role="group">
-                    <BoldButton :editor-ready="editorReady" :quill="quill"/>
-                    <ItalicButton :editor-ready="editorReady" :quill="quill"/>
-                    <TextColorButton :editor-ready="editorReady" :quill="quill"/>
-                    <SizeButton :editor-ready="editorReady" :quill="quill"/>
-                    <AlignmentButton :editor-ready="editorReady" :quill="quill"/>
-                    <LineHeightButton :editor-ready="editorReady" :quill="quill"/>
-                    <ParagraphHeightButton :editor-ready="editorReady" :quill="quill"/>
-                    <BackgroundColorButton/>
-                </div>
-                <div class="btn-group me-2" role="group">
-                    <CharacterButton :editor-ready="editorReady" :quill="quill"/>
-                    <ImageButton :editor-ready="editorReady" :quill="quill"/>
-                    <TranscriptButton/>
-                    <DownloadButton :editor-ready="editorReady" :quill="quill" @click="updateHTML"/>
-                </div>
-                <div class="btn-group me-2" role="group">
-                    <ClearFormatButton :editor-ready="editorReady" :quill="quill"/>
-                </div>
-
-            </div>
+      <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group me-2" role="group">
+          <BoldButton :editor-ready="editorReady" :quill="quill"/>
+          <ItalicButton :editor-ready="editorReady" :quill="quill"/>
+          <TextColorButton :editor-ready="editorReady" :quill="quill"/>
+          <SizeButton :editor-ready="editorReady" :quill="quill"/>
+          <AlignmentButton :editor-ready="editorReady" :quill="quill"/>
+          <LineHeightButton :editor-ready="editorReady" :quill="quill"/>
+          <ParagraphHeightButton :editor-ready="editorReady" :quill="quill"/>
+          <BackgroundColorButton/>
         </div>
-        <QuillEditor
-                id="qEditor"
-                ref="qEditor"
-                theme=""
-                @ready="ready"/>
+        <div class="btn-group me-2" role="group">
+          <CharacterButton :editor-ready="editorReady" :quill="quill"/>
+          <ImageButton :editor-ready="editorReady" :quill="quill"/>
+          <TranscriptButton/>
+          <DownloadButton :editor-ready="editorReady" :quill="quill"/>
+        </div>
+        <div class="btn-group me-2" role="group">
+          <ClearFormatButton :editor-ready="editorReady" :quill="quill"/>
+        </div>
 
-        <template v-if="editorReady">
-            <!--            {{ capTextStore.rawDelta }}-->
-        </template>
-
+      </div>
     </div>
+    <QuillEditor
+      id="qEditor"
+      ref="qEditor"
+      theme=""
+      @ready="ready"/>
+
+    <template v-if="editorReady">
+      <!--                        {{ capTextStore.rawDelta }}-->
+    </template>
+
+  </div>
 </template>
 
 <script>
@@ -94,7 +94,6 @@ export default {
       capStyleStore:       useCapStyleStore(),
       capImageStore:       useImageStore(),
       editorReady:         false,
-      setImageTimer:       null,
       quotedCorrectlyBool: false,
     };
   },
@@ -138,13 +137,11 @@ export default {
 
     Quill.register(MyImage, true);
 
-    this.imageTimer = setInterval(this.updateHTML, 500);
-
-  },
-  beforeUnmount() {
-    clearInterval(this.imageTimer);
   },
   computed: {
+    /**
+     * @returns {Quill|null}
+     */
     quill() {
       if (!this.editorReady) {
         return null;
@@ -159,7 +156,6 @@ export default {
       this.editorReady = true;
 
       this.editorChange();
-      this.updateHTML();
       this.$refs.qEditor.getQuill()
           .on('editor-change', this.editorChange);
     },
@@ -177,12 +173,9 @@ export default {
             })
             .join('');
 
-      this.quotedCorrectlyBool = this.quotedCorrectly();
-
-    },
-    updateHTML() {
+      this.quotedCorrectlyBool  = this.quotedCorrectly();
       this.capTextStore.rawHTML = this.$refs.qEditor.getHTML();
-      // updateImageSrc();
+
     },
     quotedCorrectly() {
       const filterResult = this.capTextStore.rawDelta
@@ -207,34 +200,35 @@ export default {
 
 <style>
 .ql-clipboard {
-    left: -100000px;
-    height: 1px;
-    overflow-y: hidden;
-    position: absolute;
-    top: 50%;
+  left: -100000px;
+  height: 1px;
+  overflow-y: hidden;
+  position: absolute;
+  top: 50%;
 }
 
 .ql-editor {
-    box-sizing: border-box;
-    line-height: 1.42;
-    height: 100%;
-    outline: none;
-    overflow-y: auto;
-    padding: 12px 15px;
-    tab-size: 4;
-    -moz-tab-size: 4;
-    text-align: left;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  box-sizing: border-box;
+  line-height: 1.42;
+  height: 100%;
+  outline: none;
+  overflow-y: auto;
+  padding: 12px 15px;
+  tab-size: 4;
+  -moz-tab-size: 4;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .ql-container {
-    border: 1px solid white;
-    font-size: 16px;
+  border: 1px solid white;
+  font-size: 16px;
+  height: 80%;
 }
 
 .ql-container img {
-    max-width: 100%
+  max-width: 100%
 }
 
 </style>

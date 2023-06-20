@@ -18,7 +18,7 @@ export function getGifSettings(element, parent) {
 
 export async function recordGif(canvas, gifSettings, progressCallback) {
   const capImageStore = useImageStore();
-  const response      = await fetch(capImageStore.getImage(0));
+  const response      = await fetch(capImageStore.getImage(0).url);
   const buffer        = await response.arrayBuffer();
   const gifData       = new Uint8Array(buffer);
   const gif           = parseGIF(gifData);
@@ -68,14 +68,4 @@ export async function recordGif(canvas, gifSettings, progressCallback) {
   }
 
   drawFrame();
-}
-
-export function imageTypeFromDataUri(dataUri) {
-  if (dataUri == null || dataUri.length === 0) {
-    return "";
-  }
-  return dataUri.substring(
-    dataUri.indexOf('/') + 1,
-    dataUri.indexOf(';base64'),
-  );
 }

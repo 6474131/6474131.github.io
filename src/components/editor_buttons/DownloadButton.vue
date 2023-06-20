@@ -1,20 +1,20 @@
 <template>
-    <template v-if="progress == null">
-        <button
-                v-tooltip
-                class="bi-download btn btn-outline-primary"
-                title="Download Cap"
-                @click="downloadCap"></button>
-    </template>
-    <template v-else>
-        <button class="btn btn-outline-primary" type="button"><span
-                class="spinner-border spinner-border-sm"
-                role="status"></span></button>
-    </template>
+  <template v-if="progress == null">
+    <button
+      v-tooltip
+      class="bi-download btn btn-outline-primary"
+      title="Download Cap"
+      @click="downloadCap"></button>
+  </template>
+  <template v-else>
+    <button class="btn btn-outline-primary" type="button"><span
+      class="spinner-border spinner-border-sm"
+      role="status"></span></button>
+  </template>
 </template>
 
 <script>
-import { getGifSettings, imageTypeFromDataUri, recordGif } from "@/js/gif-canvas";
+import { getGifSettings, recordGif } from "@/js/gif-canvas";
 import html2canvas from "html2canvas";
 import { useCapTextStore } from "@/stores/cap-text";
 import { useCharacterTagsStore } from "@/stores/character-tags";
@@ -81,17 +81,18 @@ export default {
       }
       console.log("THIS IS THE MAX SIZE: " + maxSize);
 
-      const imageType = imageTypeFromDataUri(this.capImageStore.getImage(0));
+      const imageType = this.capImageStore.getImage(0).contentType;
       console.log("IMAGE TYPE: " + imageType);
 
       const html2canvasOptions = {
         backgroundColor: this.capStyleStore.getTextStyle()['background-color'] ?? "#212529",
         allowTaint:      false,
+        useCORS:         true,
         scrollX:         0,
         scrollY:         -window.scrollY,
         scale:           1,
       };
-      if (imageType === 'gif' || imageType === 'octet-stream') {
+      if (imageType === 'image/gif' || imageType === 'octet-stream') {
 
         let gifSettings;
         html2canvasOptions.onclone = (_, element) => {

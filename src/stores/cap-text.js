@@ -15,6 +15,7 @@ class QuoteRange {
 
 export const useCapTextStore = defineStore('capText', {
   state:   () => ({
+    /** @type Delta|array */
     rawDelta: useLocalStorage('capDelta', {}),
     rawText:  "",
     rawHTML:  "",
