@@ -239,7 +239,7 @@ export default {
 }
 
 .ql-container img {
-  max-width: 50%;
+  max-width: 100%;
   text-align: center;
 }
 
