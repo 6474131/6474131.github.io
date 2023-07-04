@@ -2,14 +2,16 @@
   <template v-if="progress == null">
     <button
       v-tooltip
-      class="bi-download btn btn-outline-primary"
+      class="bi bi-download btn btn-outline-info"
       title="Download Cap"
-      @click="downloadCap"></button>
+      @click="downloadCap"> Download Cap
+    </button>
   </template>
   <template v-else>
     <button class="btn btn-outline-primary" type="button"><span
       class="spinner-border spinner-border-sm"
-      role="status"></span></button>
+      role="status"></span> {{ Math.floor(progress * 100) }}%
+    </button>
   </template>
 </template>
 
@@ -24,16 +26,6 @@ import { useCapSettingsStore } from "@/stores/cap-settings";
 
 export default {
   name:  "DownloadButton",
-  props: {
-    quill:       {
-      default:  null,
-      required: true,
-    },
-    editorReady: {
-      default:  false,
-      required: true,
-    },
-  },
   data() {
     return {
       capTextStore:       useCapTextStore(),
@@ -65,24 +57,35 @@ export default {
       }
     },
     downloadCap() {
-      this.progress   = 0.01;
-      const container = document.getElementById("capContainer");
-      const images    = container.querySelectorAll("img");
-      let maxSize     = 0;
-      if (this.capSettingsStore.useGivenWidth) {
-        maxSize = this.capSettingsStore.width;
-      }
-      else {
-        images.forEach((image) => {
-          if (image.naturalWidth > maxSize) {
-            maxSize = image.naturalWidth;
+      this.progress    = 0;
+      const container  = document.getElementById("capContainer");
+      const images     = container.querySelectorAll("img");
+      let maxSizeTuple = {
+        naturalWidth: 0,
+        clientWidth:  0,
+      };
+      let gifImage     = null;
+      images.forEach((image) => {
+        if (image.naturalWidth > maxSizeTuple.naturalWidth) {
+          const computedImageStyle = getComputedStyle(image);
+          const calcClientWidth    = image.clientWidth - parseInt(computedImageStyle.getPropertyValue(
+            'padding-left')) - parseInt(computedImageStyle.getPropertyValue('padding-right'));
+          maxSizeTuple             = {
+            naturalWidth: image.naturalWidth,
+            clientWidth:  calcClientWidth,
+          };
+          // check if the current image is a gif
+          for (const storeImage of this.capImageStore.images) {
+            if (image.src === storeImage.url && storeImage.contentType === 'image/gif') {
+              gifImage = image;
+            }
           }
-        });
-      }
-      console.log("THIS IS THE MAX SIZE: " + maxSize);
+        }
+      });
+      const ratio = this.capSettingsStore.downloadAsIs ? 1 : maxSizeTuple.naturalWidth / maxSizeTuple.clientWidth;
+      console.log(`RATIO: ${ratio}`);
 
       const imageType = this.capImageStore.getImage(0).contentType;
-      console.log("IMAGE TYPE: " + imageType);
 
       const html2canvasOptions = {
         backgroundColor: this.capStyleStore.getTextStyle()['background-color'] ?? "#212529",
@@ -90,22 +93,13 @@ export default {
         useCORS:         true,
         scrollX:         0,
         scrollY:         -window.scrollY,
-        scale:           1,
+        scale:           ratio,
+        // scale: 1
       };
-      if (imageType === 'image/gif' || imageType === 'octet-stream') {
-
-        let gifSettings;
-        html2canvasOptions.onclone = (_, element) => {
-          element.style.width = `${maxSize}px`;
-
-          // need to get the width/height position of the image in the container, since it may not be the same as outside the container
-          const img   = element.querySelectorAll("img")[0];
-          gifSettings = getGifSettings(img, element);
-        };
-
+      if (gifImage != null) {
         html2canvas(container, html2canvasOptions)
           .then((canvas) => {
-            recordGif(canvas, gifSettings, (progress) => {
+            recordGif(canvas, getGifSettings(gifImage, container, ratio), gifImage.src, (progress) => {
               console.log("PROGRESS " + progress);
               if (progress > 0) {
                 this.progress = progress;
@@ -119,10 +113,6 @@ export default {
 
       }
       else {
-        html2canvasOptions.onclone = (_, element) => {
-          element.style.width = `${maxSize}px`;
-        };
-
         html2canvas(container, html2canvasOptions)
           .then((canvas) => {
             this.saveAs(canvas.toDataURL(), 'cap.png');

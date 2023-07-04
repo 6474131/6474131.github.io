@@ -19,7 +19,6 @@ export const useImageStore = defineStore('images', {
           }
           const imageArray = JSON.parse(value);
           return imageArray.map((image) => {
-            console.log(image);
             return new FirebaseImage(
               image.path, image.hash, image.sourceUid, image.contentType,
               image.url,

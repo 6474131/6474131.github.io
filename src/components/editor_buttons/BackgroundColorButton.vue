@@ -1,14 +1,16 @@
 <template>
-    <div class="btn-group" role="group">
-        <input
-                v-tooltip
-                :value="capStyleStore.getTextStyle()['background-color']"
-                class="btn btn-outline-primary"
-                style="height: 100%"
-                title="Cap Background Color"
-                type="color"
-                @input="(e) => capStyleStore.setTextStyle({'background-color': e.target.value})">
+  <div class="input-group" role="group">
+    <div class="input-group-text">
+      Cap Background Color
     </div>
+  </div>
+  <input
+    v-tooltip
+    :value="capStyleStore.getTextStyle()['background-color']"
+    class="form-control form-control-color"
+    title="Cap Background Color"
+    type="color"
+    @input="(e) => capStyleStore.setTextStyle({'background-color': e.target.value})">
 </template>
 
 <script>

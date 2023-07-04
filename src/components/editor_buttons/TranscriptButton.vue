@@ -1,10 +1,10 @@
 <template>
     <div v-tooltip class="btn-group" role="group" title="Copy Transcript">
         <button
-                aria-expanded="false"
-                class="btn btn-outline-primary dropdown-toggle"
-                data-bs-toggle="dropdown"
-                type="button"><i class="bi-file-text"/>
+          aria-expanded="false"
+          class="btn btn-outline-primary dropdown-toggle"
+          data-bs-toggle="dropdown"
+          type="button">Transcript
         </button>
         <ul class="dropdown-menu">
             <li>
@@ -42,7 +42,6 @@ export default {
         text = text.replaceAll(/^\s*?>/gm, '\\>');
         text = text.replaceAll(/\n+/g, '\n\n');
       }
-      console.log("TEXT: " + text);
       navigator.clipboard.writeText(text);
       alert("Copied the cap text.");
     },

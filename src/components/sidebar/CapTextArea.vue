@@ -4,7 +4,7 @@
       <!--            Quoted correctly: {{ quotedCorrectlyBool }}-->
     </template>
     <div>
-      <div class="btn-toolbar" role="toolbar">
+      <div class="btn-toolbar justify-content-between" role="toolbar">
         <div class="btn-group me-2" role="group">
           <BoldButton :editor-ready="editorReady" :quill="quill"/>
           <ItalicButton :editor-ready="editorReady" :quill="quill"/>
@@ -13,16 +13,19 @@
           <AlignmentButton :editor-ready="editorReady" :quill="quill"/>
           <LineHeightButton :editor-ready="editorReady" :quill="quill"/>
           <ParagraphHeightButton :editor-ready="editorReady" :quill="quill"/>
-          <BackgroundColorButton/>
-        </div>
-        <div class="btn-group me-2" role="group">
-          <CharacterButton :editor-ready="editorReady" :quill="quill"/>
-          <ImageButton :editor-ready="editorReady" :quill="quill"/>
-          <TranscriptButton/>
-          <DownloadButton :editor-ready="editorReady" :quill="quill"/>
-        </div>
-        <div class="btn-group me-2" role="group">
           <ClearFormatButton :editor-ready="editorReady" :quill="quill"/>
+        </div>
+        <div class="btn-group me-2" role="group">
+          <ImageButton :editor-ready="editorReady" :quill="quill"/>
+          <CharacterSettingsButton/>
+          <CharacterButton :editor-ready="editorReady" :quill="quill"/>
+        </div>
+        <div class="btn-group me-2" role="group">
+          <FAQButton/>
+          <SettingsButton/>
+        </div>
+        <div class="btn-group" role="group">
+          <CapEditButton/>
         </div>
 
       </div>
@@ -32,10 +35,6 @@
       ref="qEditor"
       theme=""
       @ready="ready"/>
-
-    <template v-if="editorReady">
-      <!--                        {{ capTextStore.rawDelta }}-->
-    </template>
 
   </div>
 </template>
@@ -48,7 +47,7 @@ import { Quill, QuillEditor } from "@vueup/vue-quill";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BoldButton from "@/components/editor_buttons/BoldButton.vue";
 import ItalicButton from "@/components/editor_buttons/ItalicButton.vue";
-import CharacterButton from "@/components/editor_buttons/CharacterButton.vue";
+import CharacterButton from "@/components/editor_buttons/CharacterFormatButton.vue";
 import SizeButton from "@/components/editor_buttons/SizeButton.vue";
 import AlignmentButton from "@/components/editor_buttons/AlignmentButton.vue";
 import { TagBlot } from "@/js/tag";
@@ -68,10 +67,18 @@ import ParagraphHeightButton from "@/components/editor_buttons/ParagraphHeightBu
 import { CustomImage } from "@/js/custom-image";
 import { useImageStore } from "@/stores/cap-images";
 import { QUOTE_CHARACTERS } from "@/js/global";
+import FAQButton from "@/components/editor_buttons/FAQButton.vue";
+import SettingsButton from "@/components/editor_buttons/SettingsButton.vue";
+import CharacterSettingsButton from "@/components/editor_buttons/CharacterSettingsButton.vue";
+import CapEditButton from "@/components/editor_buttons/CapEditButton.vue";
 
 export default {
   name:       "CapTextArea",
   components: {
+    CapEditButton,
+    CharacterSettingsButton,
+    SettingsButton,
+    FAQButton,
     ParagraphHeightButton,
     ClearFormatButton,
     LineHeightButton,
@@ -175,6 +182,7 @@ export default {
 
       this.quotedCorrectlyBool  = this.quotedCorrectly();
       this.capTextStore.rawHTML = this.$refs.qEditor.getHTML();
+      this.capTextStore.splitText();
 
     },
     quotedCorrectly() {
@@ -216,19 +224,23 @@ export default {
   padding: 12px 15px;
   tab-size: 4;
   -moz-tab-size: 4;
-  text-align: left;
+  text-align: center;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.ql-editor p {
+  text-align: left;
 }
 
 .ql-container {
   border: 1px solid white;
   font-size: 16px;
-  height: 80%;
 }
 
 .ql-container img {
-  max-width: 100%
+  max-width: 50%;
+  text-align: center;
 }
 
 </style>

@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      paragraphHeight: null,
+      paragraphHeight: 0,
     };
   },
   computed: {
@@ -49,7 +49,7 @@ export default {
       return lineHeightArray;
     },
     shownLineHeight() {
-      if (this.paragraphHeight) {
+      if (this.paragraphHeight != null) {
         return "" + this.paragraphHeight;
       }
       return "";
@@ -58,14 +58,12 @@ export default {
   watch:    {
     editorReady() {
       this.quill.on('editor-change', () => {
-        const range = this.quill.getSelection();
+        const range     = this.quill.getSelection();
+        let default_val = '0';
         if (range) {
-          const lineHeight     = this.quill.getFormat(range.index, range.length)['paragraphheight'];
-          this.paragraphHeight = parseInt(validateFormat(lineHeight));
+          default_val = this.quill.getFormat(range.index, range.length)['paragraphheight'] ?? default_val;
         }
-        else {
-          this.paragraphHeight = null;
-        }
+        this.paragraphHeight = parseInt(validateFormat(default_val) ?? default_val);
       });
     },
   },

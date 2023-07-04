@@ -17,7 +17,10 @@ export default {
   name:  'Offcanvas',
   props: {
     headerName:  String,
-    offcanvasId: String,
+    offcanvasId: {
+      required: true,
+      type: String
+    },
   },
 };
 </script>

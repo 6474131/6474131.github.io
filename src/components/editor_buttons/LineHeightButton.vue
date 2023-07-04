@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      lineHeight: null,
+      lineHeight: 1.5,
     };
   },
   computed: {
@@ -58,14 +58,12 @@ export default {
   watch:    {
     editorReady() {
       this.quill.on('editor-change', () => {
-        const range = this.quill.getSelection();
+        const range     = this.quill.getSelection();
+        let default_val = '1.5';
         if (range) {
-          const lineHeight = this.quill.getFormat(range.index, range.length)['lineheight'];
-          this.lineHeight  = parseInt(validateFormat(lineHeight));
+          default_val = this.quill.getFormat(range.index, range.length)['lineheight'] ?? default_val;
         }
-        else {
-          this.lineHeight = null;
-        }
+        this.lineHeight = parseFloat(validateFormat(default_val) ?? default_val);
       });
     },
   },

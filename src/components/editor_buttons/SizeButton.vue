@@ -41,14 +41,12 @@ export default {
   watch:   {
     editorReady() {
       this.quill.on('editor-change', () => {
-        const range = this.quill.getSelection();
+        const range     = this.quill.getSelection();
+        let default_val = '16';
         if (range) {
-          const fontSize = this.quill.getFormat(range.index, range.length)['fontsize'];
-          this.fontSize  = parseInt(validateFormat(fontSize));
+          default_val = this.quill.getFormat(range.index, range.length)['fontsize'] ?? default_val;
         }
-        else {
-          this.fontSize = null;
-        }
+        this.fontSize = parseInt(validateFormat(default_val) ?? default_val);
       });
     },
   },

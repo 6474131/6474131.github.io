@@ -2,10 +2,10 @@
   <div v-tooltip class="btn-group" role="group" title="Manage Images">
     <button
       aria-expanded="false"
-      class="btn btn-outline-primary dropdown-toggle"
+      class="btn btn-outline-primary dropdown-toggle bi bi-easel"
       data-bs-auto-close="outside"
       data-bs-toggle="dropdown"
-      type="button"><i class="bi-easel"/>
+      type="button"> Manage Images
     </button>
     <ul class="dropdown-menu">
       <li v-for="({url}, index) in capImageStore.images" class="mb-3">
@@ -83,10 +83,10 @@ export default {
         const hash            = this.bufferToHex(hashArrayBuffer);
 
         const currentUser = await getCurrentUser();
-        const imagePath   = `images/${currentUser.uid}/${hash}`;
+        const imagePath   = `images/anon/${hash}`;
         console.log("Storage: " + imagePath);
         const q             = query(
-          collection(db, 'images'), where("path", "==", imagePath), where("sourceUid", "==", currentUser.uid),
+          collection(db, 'images'), where("path", "==", imagePath),
           limit(1),
         );
         const querySnapshot = await getDocs(q.withConverter(FirebaseImage.imageConverter));
@@ -108,7 +108,7 @@ export default {
                 collection(db, 'images').withConverter(FirebaseImage.imageConverter), {
                   path:        imageStorageRef.fullPath,
                   hash:        hash,
-                  sourceUid:   currentUser.uid,
+                  sourceUid:   'anon',
                   contentType: file.type,
                   url:         downloadUrl,
                 });
@@ -134,7 +134,6 @@ export default {
       const range = this.quill.getSelection();
       if (range) {
         const imageUrl = this.capImageStore.getImage(imageIndex).url;
-        console.log("URL: " + imageUrl);
         this.quill.insertEmbed(range.index, 'customimage', imageUrl);
       }
     },
@@ -153,5 +152,8 @@ export default {
 </script>
 
 <style scoped>
+img {
+  width: 100%;
+}
 
 </style>

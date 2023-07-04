@@ -71,14 +71,12 @@ export default {
   watch:    {
     editorReady() {
       this.quill.on('editor-change', () => {
-        const range = this.quill.getSelection();
+        const range     = this.quill.getSelection();
+        let default_val = 'left';
         if (range) {
-          const align       = this.quill.getFormat(range.index, range.length)['alignment'];
-          this.currentAlign = validateFormat(align);
+          default_val = this.quill.getFormat(range.index, range.length)['alignment'] ?? default_val;
         }
-        else {
-          this.currentAlign = null;
-        }
+        this.currentAlign = validateFormat(default_val) ?? default_val;
       });
     },
   },

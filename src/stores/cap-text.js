@@ -1,8 +1,7 @@
 // noinspection JSValidateTypes
 
 import { defineStore } from 'pinia';
-import { useImageStore } from "@/stores/cap-images";
-import { reDialogue, reImg } from "@/js/global";
+import { reDialogue } from "@/js/global";
 import { useLocalStorage } from "@vueuse/core";
 
 class QuoteRange {
@@ -16,12 +15,51 @@ class QuoteRange {
 export const useCapTextStore = defineStore('capText', {
   state:   () => ({
     /** @type Delta|array */
-    rawDelta: useLocalStorage('capDelta', {}),
-    rawText:  "",
-    rawHTML:  "",
+    rawDelta:    useLocalStorage('capDelta', {}),
+    rawText:     "",
+    rawHTML:     "",
+    firstHalf:   "",
+    secondHalf:  "",
+    middleImage: "",
+    noImageHTML: "",
   }),
-  getters: {},
   actions: {
+    splitText() {
+      const parser  = new DOMParser();
+      const htmlDoc = parser.parseFromString(this.rawHTML, 'text/html');
+
+      const paragraphs = Array.from(htmlDoc.getElementsByTagName('p'));
+      const img        = htmlDoc.getElementsByTagName('img')[0];  // Get the
+                                                                  // first
+                                                                  // image from
+                                                                  // HTML
+
+      // If the image is within a <p> tag, we want to remove it from the array
+      // of paragraphs.
+      if (img == null) {
+        return;
+
+      }
+      const parentElement = img.parentElement;
+      if (parentElement.tagName.toLowerCase() === 'p') {
+        const index = paragraphs.findIndex(p => p.isEqualNode(parentElement));
+        if (index !== -1) {
+          paragraphs.splice(index, 1);
+        }
+      }
+
+      const half       = Math.ceil(paragraphs.length / 2);
+      const firstHalf  = paragraphs.slice(0, half);
+      const secondHalf = paragraphs.slice(half);
+
+      this.firstHalf   = firstHalf.map(
+        p => p.outerHTML).join('');
+      this.secondHalf  = secondHalf.map(
+        p => p.outerHTML).join('');
+      this.noImageHTML = this.firstHalf + this.secondHalf;
+      this.middleImage = img.src;
+
+    },
     /**
      * Finds the index of the start of the line at the given index.
      * @param {number} index The index to find the linestart index at.
@@ -85,26 +123,6 @@ export const useCapTextStore = defineStore('capText', {
         }
       }
       return null;
-    },
-    convertText(text) {
-      const imageStore = useImageStore();
-      // text             = text.replace("{img}", "\n\n{img}\n\n");
-      text             = text.trimStart();
-      // text             =
-      //   text.replaceAll('\n\n', `<div class="capBreak">&nbsp;</div>`);
-
-      let counter = 0;
-      text        = text.replace(reImg, (match, $1) => {
-        // if user manually specified which image to use, base 1
-        if ($1) {
-          return `<div class="capImg"><img alt="" src=${imageStore.getImage(
-            parseInt($1) - 1)}></div>`;
-        }
-        return `<div class="capImg"><img alt="" src=${imageStore.getImage(
-          counter++)}></div>`;
-
-      });
-      return text;
     },
   },
 

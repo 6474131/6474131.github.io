@@ -5,7 +5,7 @@
                 :class="{active: active}"
                 class="btn btn-outline-primary"
                 title="Color Character Dialogue"
-                @click="active = !active"><i class="bi-people"/>
+                @click="active = !active">Mark text as:
         </button>
         <select
                 v-model="currentCharacter"

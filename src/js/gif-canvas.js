@@ -2,23 +2,23 @@ import { decompressFrames, parseGIF } from "gifuct-js";
 import { CanvasCapture } from "canvas-capture";
 import { useImageStore } from "@/stores/cap-images";
 
-export function getGifSettings(element, parent) {
+export function getGifSettings(element, parent, scale = 1) {
   const innerBox = element.getBoundingClientRect();
   const outerBox = parent.getBoundingClientRect();
-  const top      = innerBox.top - outerBox.top;
-  const left     = innerBox.left - outerBox.left;
+  const top      = (innerBox.top - outerBox.top) * scale
+  const left     = (innerBox.left - outerBox.left) * scale;
 
   return {
     top:    top,
     left:   left,
-    width:  element.width,
-    height: element.height,
+    width:  element.width * scale,
+    height: element.height * scale,
   };
 }
 
-export async function recordGif(canvas, gifSettings, progressCallback) {
+export async function recordGif(canvas, gifSettings, url, progressCallback) {
   const capImageStore = useImageStore();
-  const response      = await fetch(capImageStore.getImage(0).url);
+  const response      = await fetch(url);
   const buffer        = await response.arrayBuffer();
   const gifData       = new Uint8Array(buffer);
   const gif           = parseGIF(gifData);

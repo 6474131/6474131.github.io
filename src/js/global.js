@@ -16,7 +16,7 @@ export const reImg      = /\{img(\d+)?}/g;
  * Validates the return of quill.getFormat, as in if it's multiple values or if
  * it's invalid return null, otherwise return the sole format.
  *
- * @param {list|string} format The format to check.
+ * @param {null | string} format The format to check.
  */
 export function validateFormat(format) {
   if (Array.isArray(format)) {

@@ -62,7 +62,7 @@
             <input id="characterTextDebug" v-model="debug" class="form-check-input" role="switch" type="checkbox">
         </div>
         <div v-if="debug">
-            {{ characterTagsStore.getTag(currentCharacter) }}
+            {{ capCharacterStore.getTag(currentCharacter) }}
         </div>
     </form>
 </template>
@@ -72,7 +72,7 @@ import { useCharacterTagsStore } from "@/stores/character-tags";
 import { useCapStyleStore } from "@/stores/cap-style";
 
 export default {
-  name: "TagForm",
+  name: "CharacterSettings",
   data() {
     return {
       capCharacterStore: useCharacterTagsStore(),
