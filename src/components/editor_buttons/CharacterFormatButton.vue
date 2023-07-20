@@ -1,22 +1,29 @@
 <template>
     <div class="btn-group" role="group">
-        <button
-                v-tooltip
-                :class="{active: active}"
-                class="btn btn-outline-primary"
-                title="Color Character Dialogue"
-                @click="active = !active">Mark text as:
-        </button>
-        <select
-                v-model="currentCharacter"
-                v-tooltip
-                class="btn btn-outline-primary dropdown-toggle"
-                title="Chosen Character">
-            <option v-for="{name, val} in characterList" :value="val" class="dropdown-item">{{
-                name
-                }}
-            </option>
-        </select>
+      <button
+        v-tooltip
+        :class="{active: dumbActive}"
+        class="btn btn-outline-primary"
+        title="Color Any Piece of Text"
+        @click="formatCharacter">Dumb mark text as:
+      </button>
+      <button
+        v-tooltip
+        :class="{active: active}"
+        class="btn btn-outline-primary"
+        title="Color Character Dialogue"
+        @click="active = !active">Smart mark text as:
+      </button>
+      <select
+        v-model="currentCharacter"
+        v-tooltip
+        class="btn btn-outline-primary dropdown-toggle"
+        title="Chosen Character">
+        <option v-for="{name, val} in characterList" :value="val" class="dropdown-item">{{
+            name
+          }}
+        </option>
+      </select>
     </div>
 </template>
 
@@ -24,6 +31,7 @@
 
 import { useCharacterTagsStore } from "@/stores/character-tags";
 import { useCapTextStore } from "@/stores/cap-text";
+import { validateFormat } from "@/js/global";
 
 export default {
   name:  "CharacterButton",
@@ -43,6 +51,7 @@ export default {
       capTextStore:      useCapTextStore(),
       currentCharacter:  "",
       active:            false,
+      dumbActive:        false,
     };
   },
   computed: {
@@ -66,10 +75,33 @@ export default {
           const quotedText = this.capTextStore.getRangeOfQuoteAtIndex(range.index);
           if (quotedText) {
             this.quill.formatText(quotedText.index, quotedText.length, 'characterTag', this.currentCharacter);
-
           }
         }
       });
+      this.quill.on('editor-change', () => {
+        const range = this.quill.getSelection();
+        if (range) {
+          const characterTags = this.quill.getFormat(range.index, range.length)['characterTag'];
+          const validTag      = validateFormat(characterTags);
+          this.dumbActive     = validTag != null;
+        }
+        else {
+          this.dumbActive = false;
+        }
+      });
+    },
+  },
+  methods:  {
+    formatCharacter() {
+      const range = this.quill.getSelection();
+      if (range) {
+        if (this.dumbActive) {
+          this.quill.formatText(range.index, range.length, 'characterTag', false);
+        }
+        else {
+          this.quill.formatText(range.index, range.length, 'characterTag', this.currentCharacter);
+        }
+      }
     },
   },
 };

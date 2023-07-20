@@ -22,25 +22,26 @@
         <template v-if="capSettingsStore.currentTemplate === 'two_col_img_left'">
           <img id="image" :src="capTextStore.middleImage" class="capImg"
                :style="{width: capSettingsStore.imagePercentage + '%'}" alt=""/>
-          <div v-html="capTextStore.firstHalf"
+          <div class="h-100 capCol" v-html="capTextStore.firstHalf"
                style="display:flex; flex: 1; flex-direction: column; justify-content: space-evenly">
           </div>
         </template>
         <template v-if="capSettingsStore.currentTemplate === 'two_col_img_right'">
           <div v-html="capTextStore.firstHalf"
-               style="display:flex; flex: 1; flex-direction: column; justify-content: space-around" class="h-100">
+               class="h-100 capCol"
+               style="display:flex; flex: 1; flex-direction: column; justify-content: space-around">
           </div>
           <img id="image" :src="capTextStore.middleImage" class="capImg"
                :style="{width: capSettingsStore.imagePercentage + '%'}" alt=""/>
         </template>
         <template v-if="capSettingsStore.currentTemplate === 'three_col'">
-          <div v-html="capTextStore.firstHalf"
+          <div class="capCol" v-html="capTextStore.firstHalf"
                style="display:flex; flex: 1; flex-direction: column; justify-content: space-evenly">
           </div>
           <img id="image" :src="capTextStore.middleImage" class="capImg"
                :style="{width: capSettingsStore.imagePercentage + '%'}" alt=""/>
 
-          <div v-html="capTextStore.secondHalf"
+          <div class="capCol" v-html="capTextStore.secondHalf"
                style="display: flex; flex: 1; height: 100%; flex-direction: column; justify-content: space-evenly">
           </div>
         </template>
@@ -165,5 +166,12 @@ export default {
 //width: auto; //object-fit: contain;
 }
 
+.ql-align-right {
+  text-align: right !important;
+}
+
+.ql-align-center {
+  text-align: center !important;
+}
 
 </style>

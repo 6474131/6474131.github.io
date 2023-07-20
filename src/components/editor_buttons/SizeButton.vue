@@ -44,7 +44,7 @@ export default {
         const range     = this.quill.getSelection();
         let default_val = '16';
         if (range) {
-          default_val = this.quill.getFormat(range.index, range.length)['fontsize'] ?? default_val;
+          default_val = this.quill.getFormat(range.index, range.length)['size'] ?? default_val;
         }
         this.fontSize = parseInt(validateFormat(default_val) ?? default_val);
       });
@@ -54,7 +54,7 @@ export default {
     changeSize() {
       const range = this.quill.getSelection();
       if (range) {
-        this.quill.formatText(range.index, range.length, 'fontsize', this.fontSize + "px");
+        this.quill.formatText(range.index, range.length, 'size', this.fontSize + "px");
       }
     },
   },

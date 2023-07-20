@@ -34,7 +34,7 @@ export default {
       this.quill.on('editor-change', () => {
         const range = this.quill.getSelection();
         if (range) {
-          const textColor = this.quill.getFormat(range.index, range.length)['textcolor'];
+          const textColor = this.quill.getFormat(range.index, range.length)['color'];
           this.textColor  = validateFormat(textColor);
         }
         else {
@@ -47,7 +47,7 @@ export default {
     formatTextColor() {
       const range = this.quill.getSelection();
       if (range) {
-        this.quill.formatText(range.index, range.length, 'textcolor', this.textColor);
+        this.quill.formatText(range.index, range.length, 'color', this.textColor);
       }
     },
     changeTextColor(e) {

@@ -1,9 +1,8 @@
 <template>
-  <button :title="text"
+  <button title="DO IT"
           class="bi btn btn-success" @click="miscStore.capEditMode = !miscStore.capEditMode">
-    {{text}}
+    {{ text }}
   </button>
-
 </template>
 
 <script>

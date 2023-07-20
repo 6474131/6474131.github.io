@@ -19,7 +19,7 @@ export const useCapStyleStore = defineStore('capStyle', () => {
     'capContainer': {},
     'capText':      {},
     'capImg':       {},
-    'capBreak':     {},
+    'capCol':       {},
   };
   const styles    = ref(useLocalStorage('capStyle', capStyles));
 
@@ -85,14 +85,14 @@ export const useCapStyleStore = defineStore('capStyle', () => {
     return getStyle('capImg');
   }
 
-  function setCapBreakStyle(cssObj) {
-    const styleName = 'capBreak';
+  function setCapColStyle(cssObj) {
+    const styleName = 'capCol';
     setStyle(styleName, cssObj);
 
   }
 
-  function getCapBreakStyle() {
-    return getStyle('capBreak');
+  function getCapColStyle() {
+    return getStyle('capCol');
   }
 
   function listFonts() {
@@ -126,8 +126,8 @@ export const useCapStyleStore = defineStore('capStyle', () => {
     getCapTextStyle,
     setCapImgStyle,
     getCapImgStyle,
-    setCapBreakStyle,
-    getCapBreakStyle,
+    setCapColStyle,
+    getCapColStyle,
     listFonts,
   };
 });

@@ -51,8 +51,6 @@ import CharacterButton from "@/components/editor_buttons/CharacterFormatButton.v
 import SizeButton from "@/components/editor_buttons/SizeButton.vue";
 import AlignmentButton from "@/components/editor_buttons/AlignmentButton.vue";
 import { TagBlot } from "@/js/tag";
-import { SizeStyle } from "@/js/size";
-import { AlignmentStyle } from "@/js/alignment";
 import ImageButton from "@/components/editor_buttons/ImageButton.vue";
 import TranscriptButton from "@/components/editor_buttons/TranscriptButton.vue";
 import DownloadButton from "@/components/editor_buttons/DownloadButton.vue";
@@ -60,7 +58,6 @@ import BackgroundColorButton from "@/components/editor_buttons/BackgroundColorBu
 import TextColorButton from "@/components/editor_buttons/TextColorButton.vue";
 import LineHeightButton from "@/components/editor_buttons/LineHeightButton.vue";
 import { LineHeightStyle } from "@/js/line-height";
-import { TextColorStyle } from "@/js/text-color";
 import ClearFormatButton from "@/components/editor_buttons/ClearFormatButton.vue";
 import { ParagraphHeightStyle } from "@/js/paragraph-height";
 import ParagraphHeightButton from "@/components/editor_buttons/ParagraphHeightButton.vue";
@@ -108,10 +105,14 @@ export default {
     // needs to be done here or else things don't load correctly
     // can't put it in individual modules without having issues
     Quill.register('blots/tag-module', TagBlot);
-    Quill.register(SizeStyle, true);
-    Quill.register(AlignmentStyle, true);
+    const Size      = Quill.import('attributors/style/size');
+    const sizeArray = [];
+    for (let i = 1; i < 101; i++) {
+      sizeArray.push(`${i}px`);
+    }
+    Size.whitelist = sizeArray;
+    Quill.register(Size, true);
     Quill.register(LineHeightStyle, true);
-    Quill.register(TextColorStyle, true);
     Quill.register(ParagraphHeightStyle, true);
     Quill.register(CustomImage, true);
 
@@ -128,22 +129,6 @@ export default {
 
     Quill.register('formats/block', CustomBlockBlot);
 
-    const Image = Quill.import('formats/image');
-
-    class MyImage extends Image {
-      static create(value) {
-        const node = super.create(value);
-        if (typeof value === 'string') {
-          node.setAttribute('src', this.sanitize(value));
-          node.setAttribute('class', 'capImg');
-        }
-        return node;
-      }
-
-    }
-
-    Quill.register(MyImage, true);
-
   },
   computed: {
     /**
@@ -159,12 +144,14 @@ export default {
   methods:  {
     ready() {
       this.$refs.qEditor.getQuill()
-          .setContents(this.capTextStore.rawDelta);
+          .setContents(this.capTextStore.rawDelta, 'api');
       this.editorReady = true;
 
       this.editorChange();
       this.$refs.qEditor.getQuill()
           .on('editor-change', this.editorChange);
+
+      this.$refs.qEditor.getQuill().history.clear();
     },
     editorChange() {
       this.capTextStore.rawDelta = this.$refs.qEditor.getContents();

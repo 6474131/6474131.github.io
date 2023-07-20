@@ -7,7 +7,7 @@
     <div>
       Text
     </div>
-    <div class="input-group mb-3">
+    <div class="input-group">
       <label class="input-group-text" for="capPaddingLeft">Left</label>
       <input
         id="capPaddingLeft"
@@ -23,6 +23,24 @@
         class="form-control col-sm-1"
         type="number"
         @input="(e) => capStyleStore.setCapTextStyle({'padding-right': e.target.value + 'px'})">
+
+    </div>
+    <div v-if="capSettingsStore.currentTemplate !== 'one_col'" class="input-group mb-3">
+      <label class="input-group-text" for="capPaddingTop">Top</label>
+      <input
+        id="capPaddingTop"
+        :value="parseInt(capStyleStore.getCapColStyle()['padding-top'])"
+        class="form-control col-sm-1"
+        type="number"
+        @input="(e) => capStyleStore.setCapColStyle({'padding-top': e.target.value + 'px'})">
+
+      <label class="input-group-text" for="capPaddingBottom">Bottom</label>
+      <input
+        id="capPaddingBottom"
+        :value="parseInt(capStyleStore.getCapColStyle()['padding-bottom'])"
+        class="form-control col-sm-1"
+        type="number"
+        @input="(e) => capStyleStore.setCapColStyle({'padding-bottom': e.target.value + 'px'})">
 
     </div>
     <div>
@@ -69,13 +87,15 @@
 
 import Offcanvas from "@/components/sidebar/Offcanvas.vue";
 import { useCapStyleStore } from "@/stores/cap-style";
+import { useCapSettingsStore } from "@/stores/cap-settings";
 
 export default {
   name:       "PaddingOptions",
   components: {Offcanvas},
   data() {
     return {
-      capStyleStore: useCapStyleStore(),
+      capStyleStore:    useCapStyleStore(),
+      capSettingsStore: useCapSettingsStore(),
     };
   },
 };

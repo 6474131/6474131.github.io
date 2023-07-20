@@ -6,7 +6,7 @@
   <teleport to="body">
     <Offcanvas offcanvas-id="templateOffcanvas" header-name="Templates">
       <select v-model="capSettingsStore.currentTemplate" class="form-select" @change="selectChange">
-        <option v-for="name in ['one_col', 'two_col_img_left', 'two_col_img_right', 'three_col']" :value="name">{{
+        <option v-for="{name, value} in templates" :value="value">{{
             name
           }}
         </option>
@@ -56,6 +56,24 @@ export default {
   data() {
     return {
       capSettingsStore: useCapSettingsStore(),
+      templates:        [
+        {
+          name:  'One Column',
+          value: 'one_col',
+        },
+        {
+          name:  'Two Column (Image Left)',
+          value: 'two_col_img_left',
+        },
+        {
+          name:  'Two Column (Image Right)',
+          value: 'two_col_img_right',
+        },
+        {
+          name:  'Three Column',
+          value: 'three_col',
+        },
+      ],
     };
   },
   methods: {

@@ -43,7 +43,7 @@ export default {
       options:      [
         {
           title: 'Left',
-          val:   'left',
+          val:   false,
           icon:  'bi-text-left',
 
         },
@@ -74,7 +74,7 @@ export default {
         const range     = this.quill.getSelection();
         let default_val = 'left';
         if (range) {
-          default_val = this.quill.getFormat(range.index, range.length)['alignment'] ?? default_val;
+          default_val = this.quill.getFormat(range.index, range.length)['align'] ?? default_val;
         }
         this.currentAlign = validateFormat(default_val) ?? default_val;
       });
@@ -82,9 +82,10 @@ export default {
   },
   methods:  {
     align() {
+      console.log(`${this.currentAlign}`);
       const range = this.quill.getSelection();
       if (range) {
-        this.quill.formatLine(range.index, range.length, 'alignment', this.currentAlign);
+        this.quill.formatLine(range.index, range.length, 'align', this.currentAlign);
       }
     },
   },
