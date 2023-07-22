@@ -2,6 +2,7 @@
   <div>
     <template v-if="editorReady">
       <!--            Quoted correctly: {{ quotedCorrectlyBool }}-->
+<!--      {{ capTextStore.rawDelta }}-->
     </template>
     <div>
       <div class="btn-toolbar justify-content-between" role="toolbar">
@@ -25,7 +26,7 @@
           <SettingsButton/>
         </div>
         <div class="btn-group" role="group">
-          <CapEditButton/>
+          <CapEditButton @click="onEditClick"/>
         </div>
 
       </div>
@@ -142,9 +143,17 @@ export default {
     },
   },
   methods:  {
-    ready() {
-      this.$refs.qEditor.getQuill()
-          .setContents(this.capTextStore.rawDelta, 'api');
+    async ready() {
+      for (const image of this.capImageStore.images) {
+        await image.generateBlobUrl();
+        for (const op of this.capTextStore.rawDelta.ops) {
+          if (op.insert.customimage != null) {
+            const hash                = op.insert.customimage.hash;
+            op.insert.customimage.url = this.capImageStore.getImageFromHash(hash).url;
+          }
+        }
+      }
+      this.$refs.qEditor.getQuill().setContents(this.capTextStore.rawDelta, 'api');
       this.editorReady = true;
 
       this.editorChange();
@@ -167,7 +176,10 @@ export default {
             })
             .join('');
 
-      this.quotedCorrectlyBool  = this.quotedCorrectly();
+      this.quotedCorrectlyBool = this.quotedCorrectly();
+
+    },
+    onEditClick() {
       this.capTextStore.rawHTML = this.$refs.qEditor.getHTML();
       this.capTextStore.splitText();
 

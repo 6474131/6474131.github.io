@@ -8,21 +8,21 @@
       type="button"> Manage Images
     </button>
     <ul class="dropdown-menu">
-      <li v-for="({url}, index) in capImageStore.images" class="mb-3">
+      <li v-for="(image, index) in capImageStore.images" v-if="editorReady" class="mb-3">
         <div class="d-flex">
           <a
             class="ms-2"
             href="#"><img
             v-tooltip
             :alt="index"
-            :src="url"
+            :src="image.url"
             title="Add image at cursor"
             @click="addImageAtCursor(index)"></a>
           <button
             v-tooltip
             class="btn btn-sm btn-outline-danger bi-x align-self-center ms-2 me-2"
             title="Remove image"
-            @click="removeImage"/>
+            @click="removeImage(index)"/>
         </div>
       </li>
       <li>
@@ -48,11 +48,9 @@
 <script>
 
 import { useImageStore } from "@/stores/cap-images";
-import { getDownloadURL, getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { addDoc, collection, getDoc, getDocs, limit, query, where } from "firebase/firestore";
-import { FirebaseImage } from "@/js/firebase_objects/image-object";
-import { getCurrentUser, useFirestore } from "vuefire";
+import { useFirestore } from "vuefire";
 import { useCapTextStore } from "@/stores/cap-text";
+import { FirebaseImage } from "@/js/firebase_objects/image-object";
 
 const db = useFirestore();
 export default {
@@ -78,74 +76,39 @@ export default {
       let file      = this.$refs.fileUpload.files[0];
       let reader    = new FileReader();
       reader.onload = async () => {
-        const fileArrayBuffer = await file.arrayBuffer();
-        const hashArrayBuffer = await crypto.subtle.digest('SHA-256', fileArrayBuffer);
-        const hash            = this.bufferToHex(hashArrayBuffer);
-
-        const currentUser = await getCurrentUser();
-        const imagePath   = `images/anon/${hash}`;
-        console.log("Storage: " + imagePath);
-        const q             = query(
-          collection(db, 'images'), where("path", "==", imagePath),
-          limit(1),
-        );
-        const querySnapshot = await getDocs(q.withConverter(FirebaseImage.imageConverter));
-        if (querySnapshot.docs.length > 0) {
-          const firebaseImage = querySnapshot.docs[0].data();
-          console.log("Using previous download url: " + firebaseImage.url);
-          this.capImageStore.addImage(firebaseImage);
-          this.quill.insertEmbed(0, 'customimage', firebaseImage.url);
-          return;
-        }
-
-        try {
-          const imageStorageRef = storageRef(getStorage(), imagePath);
-
-          uploadBytes(imageStorageRef, file).then((snapshot) => {
-            console.log("Uploaded successfully!");
-            getDownloadURL(snapshot.ref).then(async (downloadUrl) => {
-              const newImageDocRef           = await addDoc(
-                collection(db, 'images').withConverter(FirebaseImage.imageConverter), {
-                  path:        imageStorageRef.fullPath,
-                  hash:        hash,
-                  sourceUid:   'anon',
-                  contentType: file.type,
-                  url:         downloadUrl,
-                });
-              const newImageDocumentSnapshot = await getDoc(newImageDocRef);
-              this.capImageStore.addImage(newImageDocumentSnapshot.data());
-              this.quill.insertEmbed(0, 'customimage', downloadUrl);
-            });
-          }).catch((reason) => {
-            console.log("Error uploading: " + reason);
-          });
-        }
-        catch (e) {
-          console.log("There was an error uploading the image: " + e);
-        }
+        const firebaseImage = await FirebaseImage.initializer(file);
+        this.capImageStore.addImage(firebaseImage);
+        this.quill.insertEmbed(0, 'customimage', {
+          url:  firebaseImage.url,
+          hash: firebaseImage.hash,
+        });
       };
+
       if (file instanceof Blob) {
         reader.readAsDataURL(file);
       }
       this.$refs.fileUpload.value = '';
 
     },
-    addImageAtCursor(imageIndex) {
+    async addImageAtCursor(imageIndex) {
       const range = this.quill.getSelection();
       if (range) {
-        const imageUrl = this.capImageStore.getImage(imageIndex).url;
-        this.quill.insertEmbed(range.index, 'customimage', imageUrl);
+        const image = this.capImageStore.getImage(imageIndex);
+        this.quill.insertEmbed(range.index, 'customimage', {
+          url:  image.url,
+          hash: image.hash,
+        });
       }
     },
-    bufferToHex(buffer) {
-      let s = '', h = '0123456789abcdef';
-      (new Uint8Array(buffer)).forEach((v) => {
-        s += h[v >> 4] + h[v & 15];
-      });
-      return s;
-    },
-    removeImage(index) {
-      this.capImageStore.removeImage(index);
+    async removeImage(index) {
+      const image = await this.capImageStore.removeImage(index);
+      if (image != null) {
+        this.capTextStore.rawDelta.ops = this.capTextStore.rawDelta.ops.filter(op => {
+          return !(op.insert.customimage != null && op.insert.customimage.hash === image.hash);
+
+        });
+      }
+      this.quill.setContents(this.capTextStore.rawDelta);
     },
   },
 };
