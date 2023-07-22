@@ -44,7 +44,7 @@
 import { useCapTextStore } from "@/stores/cap-text";
 import { useCapSettingsStore } from "@/stores/cap-settings";
 import { useCapStyleStore } from "@/stores/cap-style";
-import { Quill, QuillEditor } from "@vueup/vue-quill";
+import { Delta, Quill, QuillEditor } from "@vueup/vue-quill";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BoldButton from "@/components/editor_buttons/BoldButton.vue";
 import ItalicButton from "@/components/editor_buttons/ItalicButton.vue";
@@ -153,6 +153,14 @@ export default {
           }
         }
       }
+
+      this.$refs.qEditor.getQuill().clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+        if (node.tagName === 'IMG') {
+          return new Delta();
+        }
+        return delta;
+      });
+
       this.$refs.qEditor.getQuill().setContents(this.capTextStore.rawDelta, 'api');
       this.editorReady = true;
 
