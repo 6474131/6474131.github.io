@@ -70,7 +70,7 @@ class ImageDB {
     }
 
     this.db = await openDB(this.dbName, 1, {
-      upgrade(db) {
+      upgrade: (db) => {
         db.createObjectStore(this.storeName);
       },
     });
