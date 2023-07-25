@@ -14,6 +14,7 @@
         :value="parseInt(capStyleStore.getCapTextStyle()['padding-left'])"
         class="form-control col-sm-1"
         type="number"
+        min="0"
         @input="(e) => capStyleStore.setCapTextStyle({'padding-left': e.target.value + 'px'})">
 
       <label class="input-group-text" for="capPaddingRight">Right</label>
@@ -22,6 +23,7 @@
         :value="parseInt(capStyleStore.getCapTextStyle()['padding-right'])"
         class="form-control col-sm-1"
         type="number"
+        min="0"
         @input="(e) => capStyleStore.setCapTextStyle({'padding-right': e.target.value + 'px'})">
 
     </div>
@@ -32,6 +34,7 @@
         :value="parseInt(capStyleStore.getCapColStyle()['padding-top'])"
         class="form-control col-sm-1"
         type="number"
+        min="0"
         @input="(e) => capStyleStore.setCapColStyle({'padding-top': e.target.value + 'px'})">
 
       <label class="input-group-text" for="capPaddingBottom">Bottom</label>
@@ -40,6 +43,7 @@
         :value="parseInt(capStyleStore.getCapColStyle()['padding-bottom'])"
         class="form-control col-sm-1"
         type="number"
+        min="0"
         @input="(e) => capStyleStore.setCapColStyle({'padding-bottom': e.target.value + 'px'})">
 
     </div>

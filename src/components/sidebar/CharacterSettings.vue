@@ -22,6 +22,7 @@
                     class="form-control col-sm-1"
                     placeholder="Size here..."
                     type="number"
+                    min="1"
                     @input="(e) => updateText({'font-size': e.target.value + 'px'})">
             <label class="input-group-text col-auto" for="characterFontSize">px</label>
         </div>
@@ -93,6 +94,7 @@ export default {
       this.capCharacterStore.setTag(this.currentCharacter, cssRule);
     },
     addCharacterToDropdown(characterName) {
+      characterName = characterName.replaceAll(' ', '_')
       if (this.capCharacterStore.getTag(characterName) || characterName.length === 0) {
         return;
       }

@@ -22,6 +22,7 @@
         placeholder="Font size..."
         class="form-control"
         type="number"
+        min="1"
         @input="(e) => capStyleStore.setTextStyle({'font-size': e.target.value + 'px'})">
     </div>
   </div>

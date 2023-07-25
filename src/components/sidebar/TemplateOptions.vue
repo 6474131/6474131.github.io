@@ -27,7 +27,7 @@
       <template v-else>
         <div class="input-group">
           <div class="input-group-text">Image Width Percentage</div>
-          <input type="number" v-model="capSettingsStore.imagePercentage" class="form-control">
+          <input type="number" min="0" v-model="capSettingsStore.imagePercentage" class="form-control">
         </div>
         <div class="input-group">
           <button @click="capSettingsStore.shrinkCapHeight = !capSettingsStore.shrinkCapHeight"

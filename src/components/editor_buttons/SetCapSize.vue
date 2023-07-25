@@ -9,6 +9,7 @@
       :value="capSettingsStore.width" class="form-control"
       placeholder="Insert Cap Width..."
       type="number"
+      min="1"
       @input="(e) => capSettingsStore.width = parseInt(e.target.value)"
       :disabled="!capSettingsStore.useGivenWidth">
     <div class="input-group-text">px</div>
@@ -22,6 +23,7 @@
         :value="capSettingsStore.height" class="form-control"
         placeholder="Insert Cap Height..."
         type="number"
+        min="1"
         @input="(e) => capSettingsStore.height = parseInt(e.target.value)"
         :disabled="!capSettingsStore.useGivenHeight">
       <div class="input-group-text">px</div>
