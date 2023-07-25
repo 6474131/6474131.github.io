@@ -148,6 +148,20 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
 
+@font-face {
+  font-family: Diavlo;
+  src: url('src/fonts/Diavlo_LIGHT_II_37.otf');
+}
+
+@font-face {
+  font-family: 'CC Astro City';
+  src: url('src/fonts/ccastro-city.ttf');
+}
+
+@font-face {
+  font-family: 'CC Wild Words';
+  src: url('src/fonts/CC Wild Words Roman.ttf');
+}
 
 #capContainer div p {
   text-align: left;
