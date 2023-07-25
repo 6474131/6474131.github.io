@@ -22,12 +22,12 @@
         <template v-if="capSettingsStore.currentTemplate === 'two_col_img_left'">
           <img id="image" :src="capTextStore.middleImage" class="capImg"
                :style="{width: capSettingsStore.imagePercentage + '%'}" alt=""/>
-          <div class="h-100 capCol" v-html="capTextStore.firstHalf"
+          <div class="h-100 capCol" v-html="capTextStore.noImageHTML"
                style="display:flex; flex: 1; flex-direction: column; justify-content: space-evenly">
           </div>
         </template>
         <template v-if="capSettingsStore.currentTemplate === 'two_col_img_right'">
-          <div v-html="capTextStore.firstHalf"
+          <div v-html="capTextStore.noImageHTML"
                class="h-100 capCol"
                style="display:flex; flex: 1; flex-direction: column; justify-content: space-around">
           </div>
