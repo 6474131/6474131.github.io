@@ -17,7 +17,6 @@ export function getGifSettings(element, parent, scale = 1) {
 }
 
 export async function recordGif(canvas, gifSettings, url, progressCallback) {
-  const capImageStore = useImageStore();
   const response      = await fetch(url);
   const buffer        = await response.arrayBuffer();
   const gifData       = new Uint8Array(buffer);

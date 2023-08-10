@@ -23,9 +23,15 @@ import { useCharacterTagsStore } from "@/stores/character-tags";
 import { useCapStyleStore } from "@/stores/cap-style";
 import { useImageStore } from "@/stores/cap-images";
 import { useCapSettingsStore } from "@/stores/cap-settings";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { useFirestore } from "vuefire";
+import { Story } from "@/js/firebase_objects/stories-object";
+import { FirebaseImage } from "@/js/firebase_objects/image-object";
+
+const db = useFirestore();
 
 export default {
-  name:  "DownloadButton",
+  name: "DownloadButton",
   data() {
     return {
       capTextStore:       useCapTextStore(),
@@ -56,8 +62,22 @@ export default {
         window.open(uri);
       }
     },
+    async canvasToArrayBuffer(canvas, mimeType = 'image/png') {
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType));
+
+      const arrayBuffer = await new Promise((resolve, reject) => {
+        const reader     = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror   = reject;
+        reader.readAsArrayBuffer(blob);
+      });
+
+      return arrayBuffer;
+    },
+
     downloadCap() {
-      this.progress    = 0;
+      this.progress = 0;
+
       const container  = document.getElementById("capContainer");
       const images     = container.querySelectorAll("img");
       let maxSizeTuple = {
@@ -84,8 +104,6 @@ export default {
       });
       const ratio = this.capSettingsStore.downloadAsIs ? 1 : maxSizeTuple.naturalWidth / maxSizeTuple.clientWidth;
       console.log(`RATIO: ${ratio}`);
-
-      const imageType = this.capImageStore.getImage(0).contentType;
 
       const html2canvasOptions = {
         backgroundColor: this.capStyleStore.getTextStyle()['background-color'] ?? "#212529",
@@ -114,9 +132,20 @@ export default {
       }
       else {
         html2canvas(container, html2canvasOptions)
-          .then((canvas) => {
+          .then(async (canvas) => {
+            this.progress = 0.5;
             this.saveAs(canvas.toDataURL(), 'cap.png');
             this.progress = null;
+
+            const fileArrayBuffer = await this.canvasToArrayBuffer(canvas);
+            const hashArrayBuffer = await crypto.subtle.digest('SHA-256', fileArrayBuffer);
+            const hash            = FirebaseImage.bufferToHex(hashArrayBuffer);
+
+            addDoc(collection(db, 'stories').withConverter(Story.storyConverter), {
+              text: this.capTextStore.rawDelta,
+              hash: hash,
+              uploadTime: Timestamp.now()
+            }).then();
           });
       }
 
